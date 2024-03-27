@@ -12,7 +12,7 @@ Then, these cell lines were utilised to filter a second batch of data. By select
 
 ## Description of items downloaded
 
-1. **.bed.gz**: This is a compressed BED file used to store genomic regions of interest, presented in a tab-delimited format with columns for the chromosome, start position, and end position, among possible others. After decompressing (using gunzip for example), the BED file can be read.
+1. **.bed.gz (.bigBed)**: This is a compressed BED file used to store genomic regions of interest, presented in a tab-delimited format with columns for the chromosome, start position, and end position, among possible others. After decompressing (using gunzip for example), the BED file can be read.
     - This will be utilised to examine ChIP-seq peaks and transcript start and end sites.
 
 2. **.bigWig**: The bigWig format is used for displaying dense, continuous data that can be zoomed in and out (such as genome browser tracks). It is particularly useful for representing measurements like gene expression levels.
@@ -20,6 +20,10 @@ Then, these cell lines were utilised to filter a second batch of data. By select
 
 3. **.bigBed**: Similar to bigWig, the bigBed format is used for displaying genomic intervals (like BED files) but for large datasets.
     - Same utilisation as BED files but are also indexed (and so are more efficient for querying).
+
+For DNAm and histone ChIP-Seq, we have data types: .bigWig, .bigBed, .bed. For RNA-Seq, we have bigwig and .tsv. For the RNA .tsv files, these contain normalised data, and as such XXX.
+
+The .bed, .bigWig, and .bigBed files contain signal data, and can be binned into intervals. We can then quantify the methylation or enrichment of the histone modifications. We can align this with RNA-Seq (.bigwig) files, binning by the same intervals. We can then quantify the level of gene expression and assign this a binary value based on some threshold for expression.
 
 
 ## Processing the data for visualisation
