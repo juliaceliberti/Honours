@@ -20,3 +20,12 @@ Then, these cell lines were utilised to filter a second batch of data. By select
 
 3. **.bigBed**: Similar to bigWig, the bigBed format is used for displaying genomic intervals (like BED files) but for large datasets.
     - Same utilisation as BED files but are also indexed (and so are more efficient for querying).
+
+
+## Processing the data for visualisation
+
+As the data downloaded consisted of files in the formats of .bed.gz, .bigbed, and .bigwig, visualising the data requires preprocessing. For the initial stages of this project, the HepG2 cell line data was isolated and utilised. The script data_processing.py enters the HepG2_data folder and its subsequent directories (HepG2_DNAm and HepG2_histone) and processes the files with suffixes of .bigbed, .bed.gz, and .bigwig. It converted the former two into .bed files and the latter into .bedgraph files. 
+
+Now that the data is in a usable format, we can begin to visualise it. 
+
+## Visualising the data
