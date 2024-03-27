@@ -33,3 +33,5 @@ As the data downloaded consisted of files in the formats of .bed.gz, .bigbed, an
 Now that the data is in a usable format, we can begin to visualise it. 
 
 ## Visualising the data
+
+To visualise the .bigWig, .bed and .bigBed files, we can utilise a genome browser like IGV to view the signal. We can then utlise our Jupyter Notebook to break this data down into bins and quantify signals to work with tabular data.
