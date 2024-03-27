@@ -10,17 +10,18 @@ def process_file(file_path):
     output_dir = file_path.parent / 'processed'
     output_dir.mkdir(exist_ok=True)
 
-    if file_suffix == '.bigBed':  # Corrected to check file_suffix
+    # convert compressed and large fil types into usable file types (.bed and .bedgraph)
+    if file_suffix == '.bigBed': 
         output_file = output_dir / (file_path.stem + '.bed')
-        if not output_file.exists():  # Check if the output file already exists
+        if not output_file.exists():  
             subprocess.run(['bigBedToBed', str(file_path), str(output_file)])
-    elif file_suffix == '.bigWig':  # Corrected to check file_suffix
+    elif file_suffix == '.bigWig':  
         output_file = output_dir / (file_path.stem + '.bedGraph')
-        if not output_file.exists():  # Check if the output file already exists
+        if not output_file.exists():  
             subprocess.run(['bigWigToBedGraph', str(file_path), str(output_file)])
     elif file_suffix == '.gz':
-        output_file = output_dir / file_path.with_suffix('').name  # Correctly handle .bed.gz extension
-        if not output_file.exists():  # Check if the output file already exists
+        output_file = output_dir / file_path.with_suffix('').name 
+        if not output_file.exists(): 
             with open(output_file, 'wb') as f:
                 subprocess.run(['gunzip', '-c', str(file_path)], stdout=f)
 
