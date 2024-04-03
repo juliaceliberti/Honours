@@ -25,6 +25,50 @@ For DNAm and histone ChIP-Seq, we have data types: .bigWig, .bigBed, .bed. For R
 
 The .bed, .bigWig, and .bigBed files contain signal data, and can be binned into intervals. We can then quantify the methylation or enrichment of the histone modifications. We can align this with RNA-Seq (.bigwig) files, binning by the same intervals. We can then quantify the level of gene expression and assign this a binary value based on some threshold for expression.
 
+Each row within the metadata file represents a file. For WGBS data, multiple rows may be associated with the same experiement and represent different forms of output (for example, analysing the forward strand, the backward strand, and both). The same applies for the RNA data. Histone data output are separated by "signal p-value" and "pseudoreplicated peaks". "Signal p-value" provides a statistical measure of the significance of the observed signal, while "pseudoreplicated peaks" represent regions of the genome identified as potential binding sites based on the ChIP-seq data analysis. 
+
+Further descriptions of the data, including column names, can be accessed here:
+- [WGBS](https://www.encodeproject.org/data-standards/wgbs-encode4/)
+- [RNA]()
+- [Histone ChIP-Seq](https://www.encodeproject.org/chip-seq/histone/)
+
+All HepG2 data utilised in the data_viualisation file is assembled using GRCh38 verison of the human genome. 
+
+### More information on WGBS data
+### More information on RNA data
+
+The RNA data available consists of three files: normalised expression data for the plus and minus strand and gene quantification data in a tsv file. As this file type is not compatible with IVG and contains the data to visualise the expression levels (but is missing gene annotations), additional work was done to this file. 
+
+According to the metadata file downloaded from encode, file ENCFF649XOG is derived from V29 gene annotations. V29 gene annotation files can be downloaded from https://www.gencodegenes.org/human/release_29.html. 
+
+Downloading the gencode.v29.annotation.gtf.gz and decompressing it with `gunzip -k gencode.v29.annotation.gtf.gz` allows us to create a new Bed file. 
+
+^^ Didn't work. Also trying files found at:
+- https://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/genes/
+- https://github.com/ENCODE-DCC/rna-seq-pipeline/releases/tag/1.2.4 (docs > reference)
+    - https://www.encodeproject.org/files/ENCFF598IDH/
+    - https://www.encodeproject.org/files/ENCFF285DRD/
+    - https://www.encodeproject.org/files/ENCFF471EAM/
+    - https://www.encodeproject.org/files/GRCh38_EBV.chrom.sizes/
+- https://www.encodeproject.org/references/ENCSR151GDH/
+
+### More information on Histone ChIP-Seq data
+
+Pseudoreplicates definition:
+- derived from the same biological sample but processed separately
+- a single sample might be split after the initial preparation steps, and then each split ("pseudoreplicate") is processed and sequenced separately
+- creates two datasets that are not independent at the biological level but are independent at the technical level (library preparation, sequencing, and data processing independently).
+
+Pseudoreplicates use case: 
+- a strategy to assess technical variability or to boost confidence in the data when true biological replicates are not available
+- look for consistent findings across these technical replicates to ensure that the results are not due to technical artifacts
+- stable peaks would be those that are identified in both pseudoreplicates
+
+Partition concordance definition:
+- comparing the peaks found in each pseudoreplicate to identify "stable" peaks (found in both pseudoreplicates)
+- likely to be real signals rather than noise or artifacts
+- overlap of at least 50% with peaks from both pseudoreplicates = threshold to determine this stability and reliability
+
 
 ## Processing the data for visualisation
 
@@ -34,4 +78,4 @@ Now that the data is in a usable format, we can begin to visualise it.
 
 ## Visualising the data
 
-To visualise the .bigWig, .bed and .bigBed files, we can utilise a genome browser like IGV to view the signal. We can then utlise our Jupyter Notebook to break this data down into bins and quantify signals to work with tabular data.
+To visualise the .bigWig, .bed and .bigBed files, we can utilise a genome browser like IGV to view the signal. We can then utlise our Jupyter Notebook to break this data down into intervals and quantify signals to work with tabular data.
