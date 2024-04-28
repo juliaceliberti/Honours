@@ -29,6 +29,8 @@ Each row within the metadata file represents a file. For WGBS data, multiple row
 
 Further descriptions of the data, including column names, can be accessed here:
 - [WGBS](https://www.encodeproject.org/data-standards/wgbs-encode4/)
+![alt text](image.png)
+
 - [RNA]()
 - [Histone ChIP-Seq](https://www.encodeproject.org/chip-seq/histone/)
 
