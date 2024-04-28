@@ -27,6 +27,7 @@
 
 Updated method:
 - filtering gtf file to only contain necessary information: `awk '$3 == "gene" {print $1, $4-1, $5, $10}' HepG2_data/RefGenomes/gencode.v29.chr_patch_hapl_scaff.basic.annotation.gtf | tr -d '";' > simplified_gencode.v29.genes.bed`
+- seocnd version of the above to keep chr, start, end, strand, gene_id and feature type: 
 - gets chromosome, start, end and geneid
 - intersect files with new command: `bedtools intersect -a HepG2_data/HepG2_DNAm/ENCFF690FNR.bed.gz -b simplified_gencode.v29.genes.bed -wa -wb | awk '{print $0, $NF}' | gzip > HepG2_data/HepG2_DNAm/annotated/wgbs_with_gene_annotations_2.bed.gz`
 `bedtools intersect -a HepG2_data/HepG2_DNAm/processed/ENCFF690FNR.bed -b HepG2_data/RefGenomes/simplified_gencode_genes.bed -wa -wb > HepG2_data/HepG2_DNAm/annotated/wgbs_with_annotations_simplified.bed`
