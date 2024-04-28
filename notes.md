@@ -14,6 +14,14 @@
 
 **Filtering WGBS to keep standard chromosomes**
 
+**Creating a secondary annotation file with extended gene regions (+-2KB)**
+- This requires a FASTA file to update the annotation file (this is to better handle edge cases,particularly at the edges of chromosomes or scaffolds)
+- FASTA file downloaded from [GENCODE](https://www.gencodegenes.org/human/release_29.html) (selecting the Genome sequence, primary assembly (GRCh38) file)
+- This file was then decompressed (`gunzip GRCh38.primary_assembly.genome.fa.gz`)
+- The file was then used to create an indexed file (`samtools faidx GRCh38.primary_assembly.genome.fa`)
+- The indexed file was then used to alter the start and end positions of the gene annotation file (extend each gene region by 2000 bases on each side)
+- `bedtools slop -i gencode.v29.chr_patch_hapl_scaff.basic.annotation.gtf.gz -g GRCh38.primary_assembly.genome.fa.fai -b 2000 > extended_genes.gtf`
+
 
 **Annotating WGBS dataset with genes (& install BedTools)**
 - Example use [here](https://bedtools.readthedocs.io/en/latest/content/example-usage.html).
@@ -23,6 +31,12 @@
     - can be full or partial overlap
 - output: new dataset combining info from both datasets. 
     - each line is a region from WGBS data with addional info on overlapping regions from gene anotation file
+
+- UPDATED METHOD: 28/04/24
+- ISSUE: previous method omits lines that don't have overlap with genes
+- `(bedtools intersect -a wgbs.bed -b genes.gtf -wa -wb; bedtools intersect -a wgbs.bed -b genes.gtf -v -wa) | gzip > combined_wgbs.bed.gz`
+- `gunzip -k hg38.refGene.gtf.gz`
+- This method first gets the overlaps, then wites out the ones without overlaps and combines in a gzip file
 
 
 Updated method:
@@ -36,6 +50,11 @@ Updated method:
 Pseudoreplicated Peaks
 - `bedtools intersect -a ENCFF170GMN.bed -b gencode.v29.chr_patch_hapl_scaff.basic.annotation.gtf.gz -wa -wb | gzip > H3K9me3_pp_annotations.bed.gz`
 - `bedtools intersect -a ENCFF505LOU.bed -b gencode.v29.chr_patch_hapl_scaff.basic.annotation.gtf.gz -wa -wb | gzip > H3K27me3_pp_annotations.bed.gz`
+
+UPDATED METHOD:
+- `(bedtools intersect -a HepG2_data/HepG2_histone/processed/ENCFF170GMN.bed -b  HepG2_data/RefGenomes/gencode.v29.chr_patch_hapl_scaff.basic.annotation.gtf.gz -wa -wb; bedtools intersect -a HepG2_data/HepG2_histone/processed/ENCFF170GMN.bed -b  HepG2_data/RefGenomes/gencode.v29.chr_patch_hapl_scaff.basic.annotation.gtf.gz -v -wa) | gzip > combined_H3K9me3_pp_annotations.bed.gz`
+- `(bedtools intersect -a HepG2_data/HepG2_histone/processed/ENCFF505LOU.bed -b  HepG2_data/RefGenomes/gencode.v29.chr_patch_hapl_scaff.basic.annotation.gtf.gz -wa -wb; bedtools intersect -a HepG2_data/HepG2_histone/processed/ENCFF505LOU.bed -b  HepG2_data/RefGenomes/gencode.v29.chr_patch_hapl_scaff.basic.annotation.gtf.gz -v -wa) | gzip > combined_H3K27me3_pp_annotations.bed.gz`
+
 Signal p-value
 - `bedtools intersect -a ENCFF125NHB.bedGraph -b gencode.v29.chr_patch_hapl_scaff.basic.annotation.gtf.gz -wa -wb > H3K9me3_pval_annotations.bedGraph`
 - `bedtools intersect -a ENCFF896BFP.bedGraph -b gencode.v29.chr_patch_hapl_scaff.basic.annotation.gtf.gz -wa -wb > H3K27me3_pval_annotations.bedGraph`
