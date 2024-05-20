@@ -14,7 +14,7 @@
 
 **Filtering WGBS to keep standard chromosomes**
 
-**Creating a secondary annotation file with extended gene regions (+-2KB)**
+**Creating a secondary annotation file with extended gene regions (+-2KB dilated genes)**
 - This requires a FASTA file to update the annotation file (this is to better handle edge cases,particularly at the edges of chromosomes or scaffolds)
 - FASTA file downloaded from [GENCODE](https://www.gencodegenes.org/human/release_29.html) (selecting the Genome sequence, primary assembly (GRCh38) file)
 - This file was then decompressed (`gunzip GRCh38.primary_assembly.genome.fa.gz`)
@@ -22,6 +22,31 @@
 - The indexed file was then used to alter the start and end positions of the gene annotation file (extend each gene region by 2000 bases on each side)
 - `bedtools slop -i gencode.v29.chr_patch_hapl_scaff.basic.annotation.gtf.gz -g GRCh38.primary_assembly.genome.fa.fai -b 2000 > extended_genes.gtf`
 
+**Creating a third annotation file with 2KB before and after TSS**
+- We need to adjust these manually (doesn't appear to be a built in bedTools method to handle suh an operation)
+- We can use bedTools to validate the cut-offs (ensure they don't exceed past chromosome boundaries)
+
+1. Adjust start and end in command line (after gunzip gtf annotation file):
+
+![gtf file composition](HepG2_data/HepG2_Data_img/gtf_file.png)
+
+    ```sh
+    awk 'BEGIN {OFS="\t"} \
+        {
+            if ($6 == "+") {
+            $3 = $3 - 2000;
+            $4 = $3 + 2000;
+        } else if ($6 == "-") {
+            $4 = $4 + 2000;
+            $3 = $4 - 2000;
+        }
+        if ($3 < 0) $3 = 0;
+        print $0;
+        }' HepG2_data/RefGenomes/gencode.v29.chr_patch_hapl_scaff.basic.annotation.gtf > HepG2_data/RefGenomes/tss_2kb_genes.gtf
+    ```  
+
+2. validate stat and end positions using bedTools
+`bedtools slop -i  HepG2_data/RefGenomes/tss_2kb_genes.gtf -g HepG2_data/GenomeFASTA/GRCh38.primary_assembly.genome.fa.fai -b 0 >  HepG2_data/RefGenomes/tss_2kb_genes_final.gtf`
 
 **Annotating WGBS dataset with genes (& install BedTools)**
 - Example use [here](https://bedtools.readthedocs.io/en/latest/content/example-usage.html).
@@ -52,8 +77,8 @@ Pseudoreplicated Peaks
 - `bedtools intersect -a ENCFF505LOU.bed -b gencode.v29.chr_patch_hapl_scaff.basic.annotation.gtf.gz -wa -wb | gzip > H3K27me3_pp_annotations.bed.gz`
 
 UPDATED METHOD:
-- `(bedtools intersect -a HepG2_data/HepG2_histone/processed/ENCFF170GMN.bed -b  HepG2_data/RefGenomes/gencode.v29.chr_patch_hapl_scaff.basic.annotation.gtf.gz -wa -wb; bedtools intersect -a HepG2_data/HepG2_histone/processed/ENCFF170GMN.bed -b  HepG2_data/RefGenomes/gencode.v29.chr_patch_hapl_scaff.basic.annotation.gtf.gz -v -wa) | gzip > combined_H3K9me3_pp_annotations.bed.gz`
-- `(bedtools intersect -a HepG2_data/HepG2_histone/processed/ENCFF505LOU.bed -b  HepG2_data/RefGenomes/gencode.v29.chr_patch_hapl_scaff.basic.annotation.gtf.gz -wa -wb; bedtools intersect -a HepG2_data/HepG2_histone/processed/ENCFF505LOU.bed -b  HepG2_data/RefGenomes/gencode.v29.chr_patch_hapl_scaff.basic.annotation.gtf.gz -v -wa) | gzip > combined_H3K27me3_pp_annotations.bed.gz`
+- `(bedtools intersect -a HepG2_data/HepG2_histone/processed/ENCFF170GMN.bed -b  HepG2_data/RefGenomes/extended_genes.gtf -wa -wb; bedtools intersect -a HepG2_data/HepG2_histone/processed/ENCFF170GMN.bed -b  HepG2_data/RefGenomes/extended_genes.gtf -v -wa) | gzip > combined_H3K9me3_pp_annotations.bed.gz`
+- `(bedtools intersect -a HepG2_data/HepG2_histone/processed/ENCFF505LOU.bed -b  HepG2_data/RefGenomes/extended_genes.gtf -wa -wb; bedtools intersect -a HepG2_data/HepG2_histone/processed/ENCFF505LOU.bed -b  HepG2_data/RefGenomes/extended_genes.gtf -v -wa) | gzip > combined_H3K27me3_pp_annotations.bed.gz`
 
 Signal p-value
 - `bedtools intersect -a ENCFF125NHB.bedGraph -b gencode.v29.chr_patch_hapl_scaff.basic.annotation.gtf.gz -wa -wb > H3K9me3_pval_annotations.bedGraph`
