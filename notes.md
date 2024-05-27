@@ -24,29 +24,13 @@
 
 **Creating a third annotation file with 2KB before and after TSS**
 - We need to adjust these manually (doesn't appear to be a built in bedTools method to handle suh an operation)
-- We can use bedTools to validate the cut-offs (ensure they don't exceed past chromosome boundaries)
+- We can use bedTools to validate the cut-offs (ensure they don't exceed past chromosome boundaries) and that the new start and end zones don't overlap
 
-1. Adjust start and end in command line (after gunzip gtf annotation file):
+1. Adjust start and end in python script (see data_processing_scripts/tss_gene.py) (prevents start <1)
+2. validate start and end positions using bedTools (prevents end greater than chrom length)
+`bedtools slop -i  HepG2_data/RefGenomes/tss_2kb.gtf -g HepG2_data/GenomeFASTA/GRCh38.primary_assembly.genome.fa.fai -b 0 >  HepG2_data/RefGenomes/tss_2kb_genes_final.gtf`
 
-![gtf file composition](HepG2_data/HepG2_Data_img/gtf_file.png)
 
-    ```sh
-    awk 'BEGIN {OFS="\t"} \
-        {
-            if ($6 == "+") {
-            $3 = $3 - 2000;
-            $4 = $3 + 2000;
-        } else if ($6 == "-") {
-            $4 = $4 + 2000;
-            $3 = $4 - 2000;
-        }
-        if ($3 < 0) $3 = 0;
-        print $0;
-        }' HepG2_data/RefGenomes/gencode.v29.chr_patch_hapl_scaff.basic.annotation.gtf > HepG2_data/RefGenomes/tss_2kb_genes.gtf
-    ```  
-
-2. validate stat and end positions using bedTools
-`bedtools slop -i  HepG2_data/RefGenomes/tss_2kb_genes.gtf -g HepG2_data/GenomeFASTA/GRCh38.primary_assembly.genome.fa.fai -b 0 >  HepG2_data/RefGenomes/tss_2kb_genes_final.gtf`
 
 **Annotating WGBS dataset with genes (& install BedTools)**
 - Example use [here](https://bedtools.readthedocs.io/en/latest/content/example-usage.html).
@@ -76,13 +60,20 @@ Pseudoreplicated Peaks
 - `bedtools intersect -a ENCFF170GMN.bed -b gencode.v29.chr_patch_hapl_scaff.basic.annotation.gtf.gz -wa -wb | gzip > H3K9me3_pp_annotations.bed.gz`
 - `bedtools intersect -a ENCFF505LOU.bed -b gencode.v29.chr_patch_hapl_scaff.basic.annotation.gtf.gz -wa -wb | gzip > H3K27me3_pp_annotations.bed.gz`
 
-UPDATED METHOD:
+NaN METHOD - this results in NaNs - gets rows for where no peaks are found (not ideal in most cases):
 - `(bedtools intersect -a HepG2_data/HepG2_histone/processed/ENCFF170GMN.bed -b  HepG2_data/RefGenomes/extended_genes.gtf -wa -wb; bedtools intersect -a HepG2_data/HepG2_histone/processed/ENCFF170GMN.bed -b  HepG2_data/RefGenomes/extended_genes.gtf -v -wa) | gzip > combined_H3K9me3_pp_annotations.bed.gz`
 - `(bedtools intersect -a HepG2_data/HepG2_histone/processed/ENCFF505LOU.bed -b  HepG2_data/RefGenomes/extended_genes.gtf -wa -wb; bedtools intersect -a HepG2_data/HepG2_histone/processed/ENCFF505LOU.bed -b  HepG2_data/RefGenomes/extended_genes.gtf -v -wa) | gzip > combined_H3K27me3_pp_annotations.bed.gz`
 
 Signal p-value
 - `bedtools intersect -a ENCFF125NHB.bedGraph -b gencode.v29.chr_patch_hapl_scaff.basic.annotation.gtf.gz -wa -wb > H3K9me3_pval_annotations.bedGraph`
 - `bedtools intersect -a ENCFF896BFP.bedGraph -b gencode.v29.chr_patch_hapl_scaff.basic.annotation.gtf.gz -wa -wb > H3K27me3_pval_annotations.bedGraph`
+
+Additional databreakdown (27/05/24):
+- `bedtools intersect -a HepG2_data/HepG2_histone/processed/ENCFF170GMN.bed -b HepG2_data/RefGenomes/gencode.v29.chr_patch_hapl_scaff.basic.annotation.gtf.gz -wa -wb | H3K9me3_2kb_annot.bed`
+- The pseudoreplicated peak file will be transformed from one row corresponding to one peak, to become one row corresponds to one bp
+- Key assumptions: we will start from each peak 'start point' and add a row using `start` for start and `start + 1` for end
+- This process is applied to an already annotated file so that bedTools may use as much information as possible
+
 
 **Annotating RNA-Seq data**
 RNA gene quant files
