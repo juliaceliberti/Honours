@@ -1,8 +1,9 @@
 import pandas as pd
+import re
 
-# load .bed psuedoreplicated peaks file (using ENCFF170GMN.bed (K9) and ENCFF841QVP (K27))
-peak_file = "./HepG2_data/HepG2_histone/processed/ENCFF170GMN.bed"
-output_file = "./HepG2_data/HepG2_histone/processed/H3K9me3_bp.bed"
+# load .bed psuedoreplicated peaks file (using ENCFF170GMN.bed (H3K9me3_pp_annot_2kb.bed) and ENCFF841QVP (H3K27me3_pp_annot_2kb.bed))
+peak_file = "./HepG2_data/HepG2_histone/annotated/H3K9me3_pp_annot_2kb.bed"
+output_file = "./HepG2_data/HepG2_histone/annotated/H3K9me3_bp.bed"
 
 
 # batch size for processing
@@ -28,6 +29,15 @@ for chunk_index, chunk in enumerate(
             "pValue",
             "qValue",
             "peak",
+            "chrom_g",
+            "source_g",
+            "feature_type_g",
+            "start_g",
+            "end_g",
+            "score_g",
+            "strand_g",
+            "frame_g",
+            "attributes_g",
         ],
         chunksize=chunk_size,
     )
@@ -41,12 +51,31 @@ for chunk_index, chunk in enumerate(
         name = row["name"]
         score = row["score"]
         strand = row["strand"]
+        feature = row["feature_type_g"]
+        gene_strand = row["strand_g"]
+        attributes = row["attributes_g"]
+
+        # Extract gene ID from attributes
+        match = re.search(r'gene_id\s*"([^"]+)"', attributes)
+        gene_id = match.group(1) if match else "Unknown"
 
         # for each row, create new rows so that every bp between start and end has its own row
         for pos in range(start, end):
             peak_start = pos
             peak_end = pos + 1  # start and end are 1 bp apart
-            expanded_peaks.append([chrom, peak_start, peak_end, name, score, strand])
+            expanded_peaks.append(
+                [
+                    chrom,
+                    peak_start,
+                    peak_end,
+                    name,
+                    score,
+                    strand,
+                    feature,
+                    gene_strand,
+                    gene_id,
+                ]
+            )
 
     # Track progress
     print(f"Processed chunk {chunk_index + 1}")
@@ -61,6 +90,9 @@ expanded_df = pd.DataFrame(
         "name",
         "score",
         "strand",
+        "feature_type",
+        "gene_strand",
+        "gene_id",
     ],
 )
 
