@@ -1,0 +1,18 @@
+Working SCRATCH directory is /scratch/pmc019/jceliberti/run_conda/460852
+Results will be store in /group/pmc019/jceliberti/conda_results/460852
+TBB Warning: The number of workers is currently limited to 19. The request for 31 workers is ignored. Further requests for more workers will be silently ignored until the limit changes.
+
+Random Forest Mean Squared Error: 6106315.026162835
+XGBoost Mean Squared Error: 8576452.711001232
+Gradient Boosting Mean Squared Error: 6577097.10828165
+[LightGBM] [Info] Auto-choosing row-wise multi-threading, the overhead of testing was 0.304585 seconds.
+You can set `force_row_wise=true` to remove the overhead.
+And if memory is not enough, you can set `force_col_wise=true`.
+[LightGBM] [Info] Total Bins 24000
+[LightGBM] [Info] Number of data points in the train set: 47024, number of used features: 12000
+[LightGBM] [Info] Start training from score 254.355056
+LightGBM Mean Squared Error: 5931371.430548999
+CatBoost Mean Squared Error: 6610849.5143627925
+Support Vector Regressor Mean Squared Error: 5542019.612307386
+AdaBoost Mean Squared Error: 1527278184.6530688
+Conda ML gpu job finished at Mon Jul 15 13:38:50 AWST 2024

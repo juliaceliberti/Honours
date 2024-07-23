@@ -2,8 +2,11 @@ import pandas as pd
 import re
 
 # load .bed psuedoreplicated peaks file (using ENCFF170GMN.bed (H3K9me3_pp_annot_2kb.bed) and ENCFF841QVP (H3K27me3_pp_annot_2kb.bed))
-peak_file = "./HepG2_data/HepG2_histone/annotated/H3K9me3_pp_annot_2kb.bed"
-output_file = "./HepG2_data/HepG2_histone/annotated/H3K9me3_bp.bed"
+peak_file = "./HepG2_data/HepG2_histone/annotated/H3K27me3_pp_annot_2kb.bed"
+output_file = "./HepG2_data/HepG2_histone/annotated/H3K27me3_bp_genes.bed"
+
+# TRUE if only genes:
+only_genes = True
 
 
 # batch size for processing
@@ -43,6 +46,10 @@ for chunk_index, chunk in enumerate(
     )
 ):
 
+    # filter our non-gene rows if applicable
+    if only_genes:
+        chunk = chunk[chunk["feature_type_g"] == "gene"]
+
     # loop through each row in file
     for index, row in chunk.iterrows():
         chrom = row["chrom"]
@@ -52,6 +59,8 @@ for chunk_index, chunk in enumerate(
         score = row["score"]
         strand = row["strand"]
         feature = row["feature_type_g"]
+        start_g = row["start_g"]
+        end_g = row["end_g"]
         gene_strand = row["strand_g"]
         attributes = row["attributes_g"]
 
@@ -72,6 +81,8 @@ for chunk_index, chunk in enumerate(
                     score,
                     strand,
                     feature,
+                    start_g,
+                    end_g,
                     gene_strand,
                     gene_id,
                 ]
@@ -91,6 +102,8 @@ expanded_df = pd.DataFrame(
         "score",
         "strand",
         "feature_type",
+        "start_g",
+        "end_g",
         "gene_strand",
         "gene_id",
     ],

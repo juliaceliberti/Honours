@@ -9,8 +9,9 @@ def extract_gene_id(attributes_str):
 
 
 # histone annotation path (extended genes +-2KB)
-file_path = "HepG2_data/HepG2_histone/annotated/H3K27me3_pp_annot_2kb.bed"
-output_file = "HepG2_data/HepG2_histone/aggregated/h3k27me3_agg_2kb_gene_counts.csv"
+file_path = "HepG2_data/HepG2_histone/annotated/H3K9me3_pp_annot_2kb.bed"
+output_file = "HepG2_data/HepG2_histone/aggregated/h3k9me3_agg_2kb_gene_counts.csv"
+
 
 # utilising chunks due to memory limitations
 chunk_size = 10000
@@ -48,8 +49,14 @@ for chunk in pd.read_csv(
     # extract gene_ids
     chunk["gene_id"] = chunk["attributes_g"].apply(extract_gene_id)
 
+    # Adjust peak start and end based on gene start and end boundaries
+    chunk["adjusted_peak_start"] = chunk[["peakStart", "start_g"]].max(axis=1)
+    chunk["adjusted_peak_end"] = chunk[["peakEnd", "end_g"]].min(axis=1)
+
     # Calculate under_peak_count as the difference between peakStart and peakEnd
-    chunk["under_peak_count"] = chunk["peakEnd"] - chunk["peakStart"]
+    chunk["under_peak_count"] = (
+        chunk["adjusted_peak_end"] - chunk["adjusted_peak_start"]
+    )
 
     # feature type is 'gene' and any NaN rows
     filtered_chunk = chunk[

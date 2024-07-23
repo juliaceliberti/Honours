@@ -1,0 +1,16 @@
+ERROR: Unable to locate a modulefile for 'Anaconda3/2021.05'
+Working SCRATCH directory is /scratch/pmc019/jceliberti/run_conda/463139
+Results will be store in /group/pmc019/jceliberti/conda_results/463139
+XGBoost metrics:
+Threshold: 1
+{'Accuracy': 0.7773902687989112, 'Precision': 0.7165275459098498, 'Recall': 0.5482881962187021, 'F1-score': 0.6212187002460559, 'ROC-AUC': 0.7908291790454737, 'ConfusionMatrix': [[6993, 849], [1768, 2146]]}
+--------------------------
+XGBoost metrics:
+Threshold: 1
+{'Accuracy': 0.8015481456277646, 'Precision': 0.7116679132385939, 'Recall': 0.5492063492063493, 'F1-score': 0.6199706792637238, 'ROC-AUC': 0.8035931971645396, 'ConfusionMatrix': [[7520, 771], [1562, 1903]]}
+--------------------------
+XGBoost metrics:
+Threshold: 1
+{'Accuracy': 0.8092888737665873, 'Precision': 0.7076860179885527, 'Recall': 0.5313075506445673, 'F1-score': 0.6069424964936887, 'ROC-AUC': 0.8127150417510581, 'ConfusionMatrix': [[7783, 715], [1527, 1731]]}
+--------------------------
+Conda ML gpu job finished at Mon Jul 22 18:30:29 AWST 2024
