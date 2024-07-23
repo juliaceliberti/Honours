@@ -1,3 +1,7 @@
 # .gitignore
 HepG2_data/
 annotation_data/
+modelling/init_model/rna_expression_list_OLD.csv
+modelling/init_model/rna_expression_list.csv
+modelling/init_model/gene_matrix_list_OLD.npy
+modelling/init_model/gene_matrix_list.npy
