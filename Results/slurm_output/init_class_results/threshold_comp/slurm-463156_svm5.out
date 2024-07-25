@@ -1,0 +1,26 @@
+Collecting package metadata (current_repodata.json): ...working... WARNING conda.models.version:get_matcher(546): Using .* with relational operator is superfluous and deprecated and will be removed in a future version of conda. Your spec was 1.7.1.*, but conda is ignoring the .* and treating it as 1.7.1
+done
+Solving environment: ...working... done
+
+
+==> WARNING: A newer version of conda exists. <==
+  current version: 23.1.0
+  latest version: 24.5.0
+
+Please update conda by running
+
+    $ conda update -n base -c defaults conda
+
+Or to minimize the number of packages updated during conda update use
+
+     conda install conda=24.5.0
+
+
+
+# All requested packages already installed.
+
+Working SCRATCH directory is /scratch/pmc019/jceliberti/run_conda/463156
+Results will be stored in /group/pmc019/jceliberti/conda_results/463156
+SVC metrics:
+{'Accuracy': 0.821367812181014, 'Precision': 0.7306772908366533, 'Recall': 0.5629220380601596, 'F1-score': 0.6359223300970874, 'ROC-AUC': 0.8151967400410974, 'ConfusionMatrix': [[7822, 676], [1424, 1834]]}
+Conda ML gpu job finished at Wed Jul 24 02:45:24 AWST 2024

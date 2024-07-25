@@ -81,7 +81,7 @@ Next steps:
 | Random Forest Classifier  | 0.7815 | 0.6905 | 0.6229 | 0.6549 |
 | XGBoost  | 0.7774  | 0.7165  | 0.5482  | 0.6212  |
 | LightGBM  | 0.7908  | 0.7297  | 0.5904  | 0.6527  |
-| Support Vector Machine  | - | - | - | - |
+| Support Vector Machine  | 0.7928 | 0.7617 | 0.5496 | 0.6385 |
 
 <br />
 
@@ -92,7 +92,7 @@ Next steps:
 | Random Forest Classifier  | 0.8053 | 0.7232 | 0.5498 | 0.6247 |
 | XGBoost  | 0.8015  | 0.7117  | 0.5492  | 0.6200  |
 | LightGBM  | 0.8095  | 0.7215  | 0.5763  | 0.6408  |
-| Support Vector Machine  | - | - | - | - |
+| Support Vector Machine  | 0.8119 | 0.7400 | 0.5579 | 0.6362 |
 
 <br />
 
@@ -103,15 +103,15 @@ Next steps:
 | Random Forest Classifier  | 0.8037 | 0.7203 | 0.4767 | 0.5737 |
 | XGBoost  | 0.8093  | 0.7077  | 0.5313  | 0.6069  |
 | LightGBM  | 0.8187  | 0.7171  | 0.5712  | 0.6359  |
-| Support Vector Machine  | - | - | - | - |
+| Support Vector Machine  | 0.8214 | 0.7307 | 0.5629 | 0.6359 |
 
 Notes:
-- SVM still running
 - Generally, it seems that increasing the threshold assists the model in predicting the positive class (non-silent) and makes it harder to predict the negative class (silent genes). Whilst accuracy and precision increase, recall decreases. Using the F1 harmonic mean may be more useful as a indicator of success considering our goals of classifying silent genes (as opposed to accuracy).
 - Max F1 reached = RF classifier witha  threshold of 0 (0.66)
 - As we increase the threshold, we see a drop across all models in recall and F1, however, the drop for the LightGBM model is more slight than the others
+- SVM performs best in classifying positive class but poorly in classifying negative class
 
-It should be noted that the size of the classes is unbalanced with a greater number of silent genes than non-silent. The genes with low expression counts are close to our threshold and difficult to classify. Continue with more complex models?
+It should be noted that the size of the classes is unbalanced with a greater number of silent genes than non-silent. The genes with low expression counts are close to our threshold and difficult to classify. To explore the impact of this, we will undersample the silent (negative) class.
 
 Class sizes:
 
@@ -124,12 +124,16 @@ Class sizes:
 
 <br />
 
-Additonal work: 
-- Was curious to see the impact of combining such models
+Ensemble Model (SVM + LGBM): 
+- Was curious to see the impact of combining such models (SVM best at classifying positive class, LGBM most stable when classifying LGBM)
 - Ensemble model combining lightgbm and SVM (with soft voting)
 - threshold = 0
-- still running***
 
 | Accuracy | Precision | Recall | F1 |
 | ------------- | ------------- | ------------- | ------------- |
-| - | - | - | - |
+| 0.7734 | 0.7567 | 0.5787 | 0.6558 |
+
+
+## Repeating models with balanced classes
+
+
