@@ -1,4 +1,6 @@
 ### SCRIPT TO CLASSIFY GENES AS SILENT and NON-SILENT
+import sys
+
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
@@ -13,45 +15,52 @@ from sklearn.metrics import (
 from sklearn.ensemble import RandomForestClassifier
 
 
-# load data prepared for the model
-gene_matrix_array = np.load("gene_matrix_list.npy")
-rna_expression_df = pd.read_csv("rna_expression_list.csv")
+def init_classify_genes(threshold, undersample=False):
+    # load data prepared for the model
+    gene_matrix_array = np.load("gene_matrix_list.npy")
+    rna_expression_df = pd.read_csv("rna_expression_list.csv")
 
-# check order of genes in both files is same
-assert gene_matrix_array.shape[0] == len(
-    rna_expression_df
-), "Mismatch in number of genes"
+    # check order of genes in both files is same
+    assert gene_matrix_array.shape[0] == len(
+        rna_expression_df
+    ), "Mismatch in number of genes"
 
-# separate modification types
-dnam_features = gene_matrix_array[:, :, 0]  # Shape (58780, 4000)
-h3k9me3_features = gene_matrix_array[:, :, 1]
-h3k27me3_features = gene_matrix_array[:, :, 2]
+    # separate modification types
+    dnam_features = gene_matrix_array[:, :, 0]  # Shape (58780, 4000)
+    h3k9me3_features = gene_matrix_array[:, :, 1]
+    h3k27me3_features = gene_matrix_array[:, :, 2]
 
-thr1, thr3, thr5 = 1, 3, 5
-thr1_y = (rna_expression_df["expression"].values > thr1).astype(
-    int
-)  # 0 if silent (1), 1 if expressed
-thr3_y = (rna_expression_df["expression"].values > thr3).astype(
-    int
-)  # 0 if silent (3), 1 if expressed
-thr5_y = (rna_expression_df["expression"].values > thr5).astype(
-    int
-)  # 0 if silent (5), 1 if expressed
+    # concat features to make 1D
+    X = np.concatenate(
+        (dnam_features, h3k9me3_features, h3k27me3_features), axis=1
+    )  # Shape (58780, 12000)
 
-
-# concat features to make 1D
-X = np.concatenate(
-    (dnam_features, h3k9me3_features, h3k27me3_features), axis=1
-)  # Shape (58780, 12000)
-
-
-i = 0
-thr_list = [thr1, thr3, thr5]
-
-
-for thr in [thr1_y, thr3_y, thr5_y]:
     #  binary target variable - classify if gene is silent or not
-    y = thr
+    y = (rna_expression_df["expression"].values > threshold).astype(
+        int
+    )  # 0 if silent, 1 if expressed
+
+    if undersample:
+        # Create a DataFrame to keep features and labels together
+        data = pd.DataFrame(X)
+        data["label"] = y
+
+        # Split into silent and expressed classes
+        silent = data[data["label"] == 0]
+        expressed = data[data["label"] == 1]
+
+        # Undersample the silent class
+        silent_sampled = silent.sample(n=len(expressed), random_state=42)
+
+        # Concatenate the undersampled silent class with the expressed class
+        undersampled_data = pd.concat([silent_sampled, expressed])
+
+        # Sort to maintain the original order
+        undersampled_data = undersampled_data.sort_index()
+
+        # Separate features and labels
+        X = undersampled_data.drop("label", axis=1).values
+        y = undersampled_data["label"].values
 
     # training and testing
     X_train, X_test, y_train, y_test = train_test_split(
@@ -76,7 +85,14 @@ for thr in [thr1_y, thr3_y, thr5_y]:
     metrics["ConfusionMatrix"] = confusion_matrix(y_test, y_pred).tolist()
 
     print("Random Forest metrics:")
-    print("Threshold:", thr_list[i])
     print(metrics)
-    print("--------------------------")
-    i += 1
+
+
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print("Usage: python init_class_rf.py <threshold> [undersample]")
+        sys.exit(1)
+
+    threshold = int(sys.argv[1])
+    undersample = bool(int(sys.argv[2])) if len(sys.argv) > 2 else False
+    init_classify_genes(threshold, undersample)

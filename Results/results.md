@@ -136,4 +136,71 @@ Ensemble Model (SVM + LGBM):
 
 ## Repeating models with balanced classes
 
+Due to the imbalance between silent and non-silent genes, we will repeat the classification task using a threshold of 0 and undersampling the silent class. Both classes are now the same sized (matched to the size of the smallest class = 22138 & 22138)
 
+| Model Type  | Accuracy | Precision | Recall | F1 |
+| ------------- | ------------- | ------------- | ------------- | ------------- |
+| Random Forest Classifier  | 0.7185 | 0.7164 | 0.7260 | 0.7211 |
+| XGBoost  | 0.7243 | 0.7617 | 0.6550 | 0.7043 |
+| LightGBM  | 0.7293 | 0.7524 | 0.6858 | 0.7176 |
+| Support Vector Machine  | 0.7377 | 0.8029 | 0.6320 | 0.7072 |
+
+Notes: 
+- F1 scores have increased considerably (around 5% each)
+- Accuracy has decreased but was likely inflated previously due to the imbalance of class sizes
+- Precision and recall have both increased
+- Using the same number of rows for silenced and unsilenced
+- SVM best for precision but still not great at classifying silent genes
+
+
+## Modelling with DNAm as output
+
+To explore the interplay between histone modifications, expression and DNA methylation, we will model using expression and histone modifications as our input and DNA methylation as our output. To begin with more simple and interpretable modelling, we will start with similar ML models. 
+
+How to predict DNAm is not as straightforward as expression (with a count value that can be classified as silent or non-silent). To begin, we have attempted a multi-class output problem, predicting methylated or non-methylated for each instance.
+
+JOBID: 464583
+
+## Exploring the use of nerual networks
+
+### Simple (single) fully connected layer
+
+Using a single fully connected linear layer and cross entropy loss. 
+Using: 
+- 0 threshold
+- Linear layer
+- Balanced and unbalanced class (as listed)
+- Criterion = nn.CrossEntropyLoss()
+- Optimizer = optim.Adam(model.parameters(), lr=0.001)
+- Epochs = 10
+- batch norm for regularisation (only in stated table)
+
+*Balanced classes*
+
+| Accuracy | Precision | Recall | F1 |
+| ------------- | ------------- | ------------- | ------------- |
+| 0.5854 | 0.5528 | 0.9050 | 0.6863 |
+
+<br />
+
+*Unbalanced classes*
+
+| Accuracy | Precision | Recall | F1 |
+| ------------- | ------------- | ------------- | ------------- |
+| 0.6857 | 0.5798 | 0.5720 | 0.5759 |
+
+<br />
+
+*Balanced classes & Batch Normaslisation*
+
+| Accuracy | Precision | Recall | F1 |
+| ------------- | ------------- | ------------- | ------------- |
+| 0.7245 | 0.7622 | 0.6547 | 0.7044 |
+
+
+
+Notes:
+- Achieving very high recall with balanced classes (great at classifying silent genes but poorer performance classifying non-silent genes)
+- Opposite effect of using the simpler ML models
+- Including batch normalisation balances precision and recall (+ highest F1 score)
+- F1 score is comparable to the balanced simpler ML models (RF, LGBM, XGB, SVM) and is only utiltising a single linear layer 

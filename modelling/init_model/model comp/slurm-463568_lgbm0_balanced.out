@@ -1,0 +1,14 @@
+Working SCRATCH directory is /scratch/pmc019/jceliberti/run_conda/463568
+Results will be stored in /group/pmc019/jceliberti/conda_results/463568
+Threshold value selected: 0
+[LightGBM] [Info] Number of positive: 17698, number of negative: 17722
+[LightGBM] [Info] Auto-choosing row-wise multi-threading, the overhead of testing was 0.293884 seconds.
+You can set `force_row_wise=true` to remove the overhead.
+And if memory is not enough, you can set `force_col_wise=true`.
+[LightGBM] [Info] Total Bins 24000
+[LightGBM] [Info] Number of data points in the train set: 35420, number of used features: 12000
+[LightGBM] [Info] [binary:BoostFromScore]: pavg=0.499661 -> initscore=-0.001355
+[LightGBM] [Info] Start training from score -0.001355
+SVC metrics:
+{'Accuracy': 0.7293360433604336, 'Precision': 0.7524091919940696, 'Recall': 0.6858108108108109, 'F1-score': 0.7175680452456699, 'ROC-AUC': 0.7906619000114246, 'ConfusionMatrix': [[3414, 1002], [1395, 3045]]}
+Conda ML gpu job finished at Thu Jul 25 16:56:56 AWST 2024

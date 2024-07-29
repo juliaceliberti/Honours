@@ -1,0 +1,17 @@
+Working SCRATCH directory is /scratch/pmc019/jceliberti/run_conda/464585
+Results will be store in /group/pmc019/jceliberti/conda_results/464585
+Epoch 1, Loss: 0.6910935640335083
+Epoch 2, Loss: 0.6614955067634583
+Epoch 3, Loss: 0.6521850228309631
+Epoch 4, Loss: 0.6504037976264954
+Epoch 5, Loss: 0.6430542469024658
+Epoch 6, Loss: 0.6339285969734192
+Epoch 7, Loss: 0.6360253095626831
+Epoch 8, Loss: 0.6297480463981628
+Epoch 9, Loss: 0.6159115433692932
+Epoch 10, Loss: 0.6101011633872986
+Accuracy: 57.65582655826558%
+Precision: 0.546672077922078
+Recall: 0.9101351351351351
+F1 Score: 0.6830628803245437
+Conda ML gpu job finished at Sun Jul 28 19:27:32 AWST 2024

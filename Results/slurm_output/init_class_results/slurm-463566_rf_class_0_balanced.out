@@ -1,0 +1,6 @@
+Working SCRATCH directory is /scratch/pmc019/jceliberti/run_conda/463566
+Results will be stored in /group/pmc019/jceliberti/conda_results/463566
+Threshold value selected: 0
+Random Forest metrics:
+{'Accuracy': 0.7184959349593496, 'Precision': 0.7163814180929096, 'Recall': 0.7259009009009009, 'F1-score': 0.7211097438192191, 'ROC-AUC': 0.7897221100176264, 'ConfusionMatrix': [[3140, 1276], [1217, 3223]]}
+Conda ML gpu job finished at Thu Jul 25 16:52:42 AWST 2024

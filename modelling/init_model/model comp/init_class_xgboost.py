@@ -12,13 +12,16 @@ from sklearn.metrics import (
 )
 from xgboost import XGBClassifier
 
-def classify_genes(threshold):
+
+def init_classify_genes(threshold, undersample=False):
     # Load data prepared for the model
     gene_matrix_array = np.load("gene_matrix_list.npy")
     rna_expression_df = pd.read_csv("rna_expression_list.csv")
 
     # Check order of genes in both files is the same
-    assert gene_matrix_array.shape[0] == len(rna_expression_df), "Mismatch in number of genes"
+    assert gene_matrix_array.shape[0] == len(
+        rna_expression_df
+    ), "Mismatch in number of genes"
 
     # Separate modification types
     dnam_features = gene_matrix_array[:, :, 0]
@@ -31,8 +34,32 @@ def classify_genes(threshold):
     # Concatenate features to make 1D
     X = np.concatenate((dnam_features, h3k9me3_features, h3k27me3_features), axis=1)
 
+    if undersample:
+        # Create a DataFrame to keep features and labels together
+        data = pd.DataFrame(X)
+        data["label"] = y
+
+        # Split into silent and expressed classes
+        silent = data[data["label"] == 0]
+        expressed = data[data["label"] == 1]
+
+        # Undersample the silent class
+        silent_sampled = silent.sample(n=len(expressed), random_state=42)
+
+        # Concatenate the undersampled silent class with the expressed class
+        undersampled_data = pd.concat([silent_sampled, expressed])
+
+        # Sort to maintain the original order
+        undersampled_data = undersampled_data.sort_index()
+
+        # Separate features and labels
+        X = undersampled_data.drop("label", axis=1).values
+        y = undersampled_data["label"].values
+
     # Training and testing
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=42
+    )
 
     # Store eval metrics
     metrics = {}
@@ -56,9 +83,12 @@ def classify_genes(threshold):
     print(metrics)
     print("--------------------------")
 
+
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Usage: python thr_135_class_xgboost.py <threshold>")
+        print("Usage: python init_class_xgboost.py <threshold> [undersample]")
         sys.exit(1)
+
     threshold = int(sys.argv[1])
-    classify_genes(threshold)
+    undersample = bool(int(sys.argv[2])) if len(sys.argv) > 2 else False
+    init_classify_genes(threshold, undersample)
