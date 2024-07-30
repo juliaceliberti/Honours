@@ -1,0 +1,9 @@
+Job Name: genejc_reg_rf_dnam_count_plot2
+Script: reg_rf_dnam_count.py
+Working SCRATCH directory is /scratch/pmc019/jceliberti/run_conda/465318
+Results will be store in /group/pmc019/jceliberti/conda_results/465318
+Random Forest Regressor metrics:
+Mean Absolute Error (MAE): 62.302215755778676
+Mean Squared Error (MSE): 7097.761550255756
+R-squared (R2): 0.31221586768851706
+Conda ML gpu job finished at Tue Jul 30 00:01:01 AWST 2024

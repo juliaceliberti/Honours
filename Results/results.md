@@ -128,6 +128,8 @@ Ensemble Model (SVM + LGBM):
 - Was curious to see the impact of combining such models (SVM best at classifying positive class, LGBM most stable when classifying LGBM)
 - Ensemble model combining lightgbm and SVM (with soft voting)
 - threshold = 0
+- Unbalanced classes
+- Based on the below results, the combination of these models didn't provide a significant increase to F1 (as compared to the standalone LGBM or SVM F1 values)
 
 | Accuracy | Precision | Recall | F1 |
 | ------------- | ------------- | ------------- | ------------- |
@@ -157,11 +159,44 @@ Notes:
 
 To explore the interplay between histone modifications, expression and DNA methylation, we will model using expression and histone modifications as our input and DNA methylation as our output. To begin with more simple and interpretable modelling, we will start with similar ML models. 
 
-How to predict DNAm is not as straightforward as expression (with a count value that can be classified as silent or non-silent). To begin, we have attempted a multi-class output problem, predicting methylated or non-methylated for each instance.
+NOTE: predicting DNAm is not as straightforward as expression (with a count value that can be classified as silent or non-silent). To begin, I attempted a multioutput model (predicting binary output for all 4000 positions) but am unsure whether this is appropriate. Regardless, I will be meeting with HPC team to assist with running a script using distributed computation. 
 
-JOBID: 464583
+For a simpler approach, we predict the count of methylated bases (x/4000).
 
-## Exploring the use of nerual networks
+The distribution of the DNAm counts is shown below: 
+
+![image info](slurm_output/init_regress_results/pred_dnam/DNAm_count_distribution.png)
+
+
+*Regression Results*
+
+| Model | MAE | MSE | R^2 |
+| ------------- | ------------- | ------------- | ------------- |
+| Random Forest | 62.3022 | 7097.7616 | 0.3122 |
+| XGBoost | 60.4960 | 6689.7580 | 0.3518 | 
+| LightGBM | 60.1549 | 6581.1190 | 0.3623 |
+| SVM | 68.9159 | 9374.4317 | 0.0916 | 
+
+
+To assist in the interpretation of these results, actual vs predicted graphs are provided below:
+
+| Random Forest | XGBoost |
+|---------------|---------|
+| ![Random Forest](slurm_output/init_regress_results/pred_dnam/rf_actual_vs_predicted_dnam_counts.png) | ![XGBoost](slurm_output/init_regress_results/pred_dnam/xgb_actual_vs_predicted_dnam_counts.png) |
+
+| LightGBM | SVM |
+|---------------|---------|
+| ![LightGBM](slurm_output/init_regress_results/pred_dnam/lgbm_actual_vs_predicted_dnam_counts.png) | ![SVM](slurm_output/init_regress_results/pred_dnam/svm_actual_vs_predicted_dnam_counts.png) |
+
+Notes: 
+- LightGBM sees lowest error
+- Somewhat difficult to interpret error
+- Distribution of the DNAm counts is skewed - should I be considering transforming count by taking the log?
+- Based on actual vs predicted plots, seems to sit consistently around 100 - 300 for predicted values. Could this be improved with transformations?
+
+
+
+## Exploring the use of neural networks
 
 ### Simple (single) fully connected layer
 
@@ -201,6 +236,7 @@ Using:
 
 Notes:
 - Achieving very high recall with balanced classes (great at classifying silent genes but poorer performance classifying non-silent genes)
-- Opposite effect of using the simpler ML models
+    - Opposite effect of using the simpler ML models
 - Including batch normalisation balances precision and recall (+ highest F1 score)
 - F1 score is comparable to the balanced simpler ML models (RF, LGBM, XGB, SVM) and is only utiltising a single linear layer 
+    - Promising results considering its simplicity
