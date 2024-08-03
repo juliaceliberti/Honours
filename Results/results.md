@@ -190,9 +190,9 @@ To assist in the interpretation of these results, actual vs predicted graphs are
 
 Notes: 
 - LightGBM sees lowest error
-- Somewhat difficult to interpret error
 - Distribution of the DNAm counts is skewed - should I be considering transforming count by taking the log?
 - Based on actual vs predicted plots, seems to sit consistently around 100 - 300 for predicted values. Could this be improved with transformations?
+- Potentially a combination of skewed distribution for DNAm counts and inputs on different scales - 8000 binary + 1 expression count value
 
 
 
@@ -226,7 +226,7 @@ Using:
 
 <br />
 
-*Balanced classes & Batch Normaslisation*
+*Balanced classes & Batch Normaslisation* - Note: Realised I normalised before passing through the layer so basically just normalised the input data rather than the layer output
 
 | Accuracy | Precision | Recall | F1 |
 | ------------- | ------------- | ------------- | ------------- |
@@ -240,3 +240,20 @@ Notes:
 - Including batch normalisation balances precision and recall (+ highest F1 score)
 - F1 score is comparable to the balanced simpler ML models (RF, LGBM, XGB, SVM) and is only utiltising a single linear layer 
     - Promising results considering its simplicity
+
+
+### Multi-layer NN (with 2 linear hidden layers + ReLU)
+
+<br />
+
+*Balanced classes & Batch Normaslisation* - Note: normalisation applied to hidden layer output before activation
+
+| Accuracy | Precision | Recall | F1 |
+| ------------- | ------------- | ------------- | ------------- |
+| 0.6233 | 0.5801 | 0.9 | 0.7055 |
+
+Note: 
+- Class prediction success is now imbalanced again (potentially due to the removal of initial data normalisatin)
+- Despite this disparity betwen precision and recall, F1 just surpasses the normalised input single layer model (likely due to activation function and extra layer)
+- Out-performed by RF, LGBM and SVM (based on F1)
+

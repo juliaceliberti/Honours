@@ -1,0 +1,19 @@
+Job Name: genejc_nn_expression_v2
+Script: init_nn_expression_v2.py
+Working SCRATCH directory is /scratch/pmc019/jceliberti/run_conda/467242
+Results will be store in /group/pmc019/jceliberti/conda_results/467242
+Epoch 1, Loss: 0.7532055974006653
+Epoch 2, Loss: 1.0553951263427734
+Epoch 3, Loss: 0.6166123151779175
+Epoch 4, Loss: 0.5922636389732361
+Epoch 5, Loss: 0.5933236479759216
+Epoch 6, Loss: 0.5743897557258606
+Epoch 7, Loss: 0.5543428659439087
+Epoch 8, Loss: 0.5410003066062927
+Epoch 9, Loss: 0.5362152457237244
+Epoch 10, Loss: 0.5357493758201599
+Accuracy: 62.330623306233065%
+Precision: 0.5801393728222997
+Recall: 0.9
+F1 Score: 0.7055084745762712
+Conda ML gpu job finished at Sat Aug 3 13:43:56 AWST 2024

@@ -8,6 +8,18 @@ from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
 from sklearn.svm import SVR
 
 
+def plot_transformations(y, y_pred, transformation_name):
+    plt.figure(figsize=(10, 6))
+    plt.scatter(y, y_pred, alpha=0.5)
+    plt.plot([y.min(), y.max()], [y.min(), y.max()], "--r")
+    plt.xlabel("Actual Counts")
+    plt.ylabel("Predicted Counts")
+    plt.title(
+        f"Transformed {transformation_name} - Actual vs Predicted DNA Methylation Counts"
+    )
+    plt.show()
+
+
 def predict_dna_methylation():
 
     # Load data
@@ -65,7 +77,23 @@ def predict_dna_methylation():
     plt.title("SVM Actual vs Predicted DNA Methylation Counts")
 
     # Save the plot
-    plt.savefig("svm_actual_vs_predicted_dnam_counts.png")
+    plt.savefig("svm_actual_vs_predicted_dnam_counts_org.png")
+
+    # Log transformation
+    y_log = np.log1p(y_test)  # log(1 + y) to handle log(0)
+    y_pred_log = np.log1p(y_pred)
+    plot_transformations(y_log, y_pred_log, "Log")
+
+    # Save the plot
+    plt.savefig("svm_actual_vs_predicted_dnam_counts_log.png")
+
+    # Square root transformation
+    y_sqrt = np.sqrt(y_test)
+    y_pred_sqrt = np.sqrt(y_pred)
+    plot_transformations(y_sqrt, y_pred_sqrt, "Square Root")
+
+    # Save the plot
+    plt.savefig("svm_actual_vs_predicted_dnam_counts_sqrt.png")
 
 
 if __name__ == "__main__":
