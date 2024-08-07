@@ -180,13 +180,9 @@ The distribution of the DNAm counts is shown below:
 
 To assist in the interpretation of these results, actual vs predicted graphs are provided below:
 
-| Random Forest | XGBoost |
-|---------------|---------|
-| ![Random Forest](slurm_output/init_regress_results/pred_dnam/rf_actual_vs_predicted_dnam_counts.png) | ![XGBoost](slurm_output/init_regress_results/pred_dnam/xgb_actual_vs_predicted_dnam_counts.png) |
-
-| LightGBM | SVM |
-|---------------|---------|
-| ![LightGBM](slurm_output/init_regress_results/pred_dnam/lgbm_actual_vs_predicted_dnam_counts.png) | ![SVM](slurm_output/init_regress_results/pred_dnam/svm_actual_vs_predicted_dnam_counts.png) |
+| Random Forest | XGBoost | LightGBM | SVM |
+|---------|---------|---------|---------|
+| ![Random Forest](slurm_output/init_regress_results/pred_dnam/rf_actual_vs_predicted_dnam_counts.png) | ![XGBoost](slurm_output/init_regress_results/pred_dnam/xgb_actual_vs_predicted_dnam_counts.png) | ![LightGBM](slurm_output/init_regress_results/pred_dnam/lgbm_actual_vs_predicted_dnam_counts.png) | ![SVM](slurm_output/init_regress_results/pred_dnam/svm_actual_vs_predicted_dnam_counts.png) |
 
 Notes: 
 - LightGBM sees lowest error
@@ -194,7 +190,19 @@ Notes:
 - Based on actual vs predicted plots, seems to sit consistently around 100 - 300 for predicted values. Could this be improved with transformations?
 - Potentially a combination of skewed distribution for DNAm counts and inputs on different scales - 8000 binary + 1 expression count value
 
+*Replotting with log and sqrt to explore whether transforming variables would improve outcomes*
+| Random Forest Log | XGBoost Log | LightGBM Log | SVM Log |
+|---------|---------|---------|---------|
+| ![RFLog](slurm_output/init_regress_results/pred_dnam/rf_actual_vs_predicted_dnam_counts_log.png) | ![XGBoostLog](slurm_output/init_regress_results/pred_dnam/xgb_actual_vs_predicted_dnam_counts_log.png) | ![LightGBMLog](slurm_output/init_regress_results/pred_dnam/lgbm_actual_vs_predicted_dnam_counts_log.png) | ![SVMLog](slurm_output/init_regress_results/pred_dnam/svm_actual_vs_predicted_dnam_counts_log.png) |
 
+| Random Forest Sqrt | XGBoost Sqrt | LightGBM Sqrt | SVM Sqrt |
+|---------|---------|---------|---------|
+| ![RFLog](slurm_output/init_regress_results/pred_dnam/rf_actual_vs_predicted_dnam_counts_sqrt.png) | ![XGBoostLog](slurm_output/init_regress_results/pred_dnam/xgb_actual_vs_predicted_dnam_counts_sqrt.png) | ![LightGBMLog](slurm_output/init_regress_results/pred_dnam/lgbm_actual_vs_predicted_dnam_counts_sqrt.png) | ![SVMLog](slurm_output/init_regress_results/pred_dnam/svm_actual_vs_predicted_dnam_counts_sqrt.png) |
+
+
+Notes: 
+- No improvement through use of transformations
+- Should I explore this further?
 
 ## Exploring the use of neural networks
 
@@ -242,7 +250,7 @@ Notes:
     - Promising results considering its simplicity
 
 
-### Multi-layer NN (with 2 linear hidden layers + ReLU)
+### Multi-layer NN (with 2 linear hidden layers + batchNorm + ReLU)
 
 <br />
 
@@ -257,3 +265,51 @@ Note:
 - Despite this disparity betwen precision and recall, F1 just surpasses the normalised input single layer model (likely due to activation function and extra layer)
 - Out-performed by RF, LGBM and SVM (based on F1)
 
+### Multi-layer NN (with 3 linear hidden layers + batchNorm +  ReLU)
+
+<br />
+
+*Balanced classes & Batch Normaslisation* - Note: normalisation applied to hidden layer output before activation
+
+| Accuracy | Precision | Recall | F1 |
+| ------------- | ------------- | ------------- | ------------- |
+| 0.6332 | 0.5919 | 0.8646 | 0.7027 |
+
+Notes:
+- Trade-off with slight increase in precision and decrease in recall
+- Overall, worse performance than 2 layer model (based on F1)
+
+
+## Restricted Boltzman Machine
+
+Questions: 
+- Would we use this on all 4 data types at once? - K9, K27, DNAm, expression
+
+Potential approach: 
+- Train 2 models separately - one using data from silenced genes and the other from non-silent genes
+- Find the patterns/interplay that lead to silencing and compare to non-silent
+- Compare the hidden layer learned features
+- Could potentially mask certain features to see impact on other mods??
+
+Tracking: 
+- Reconstruction error (can compare to see which is more predictable)
+- Hidden layer activation patterns - differences in activation patterns (not sure how to best go about this)
+
+### First attempt:
+Model Overview: 
+- Used a 12000 array of K9, K27 and WGBS
+- Separated into two training sets - silent and non-silent
+- Initialisation: Sets up the model with a visible layer (input data size), a hidden layer (latent features), weights (W), and biases for the hidden (h_bias) and visible layers (v_bias).
+- Sampling Functions: Methods sample_h and sample_v are used to calculate probabilities and sample hidden and visible layer states.
+- Forward Pass: The forward method simulates a round-trip through the RBM, starting from visible to hidden and back to visible.
+- Contrastive Divergence: The contrastive_divergence method performs the training step using the Contrastive Divergence algorithm, iteratively refining the weights.
+- Reconstruction Error: The reconstruction_error method calculates the error between the original and reconstructed visible layer to measure how well the model has learned.
+
+*Note: classes were not balanced for this baseline
+
+
+*Final Reconstruction Error*
+<br />
+| Silent Genes | Non-silent Genes |
+| ------------- | ------------- |
+| 1025.5759 | 1121.8776 |
