@@ -1,0 +1,35 @@
+Job Name: genejc_mlp_expression_v1_reducedFrom1000to500_now500to300_110824
+Script: mlp_expression_v1.py
+Working SCRATCH directory is /scratch/pmc019/jceliberti/run_conda/478313
+Results will be store in /group/pmc019/jceliberti/conda_results/478313
+2024-08-11 23:24:07.560907: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: SSE4.1 SSE4.2 AVX AVX2 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+/home/jceliberti/.conda/envs/gene_new/lib/python3.12/site-packages/keras/src/layers/core/dense.py:87: UserWarning: Do not pass an `input_shape`/`input_dim` argument to a layer. When using Sequential models, prefer using an `Input(shape)` object as the first layer in the model instead.
+  super().__init__(activity_regularizer=activity_regularizer, **kwargs)
+Epoch 1/10
+886/886 - 17s - 19ms/step - accuracy: 0.7074 - loss: 0.6376 - precision: 0.7225 - recall: 0.6723 - val_accuracy: 0.7325 - val_loss: 0.5441 - val_precision: 0.7888 - val_recall: 0.6365
+Epoch 2/10
+886/886 - 14s - 16ms/step - accuracy: 0.7584 - loss: 0.5000 - precision: 0.8086 - recall: 0.6762 - val_accuracy: 0.7291 - val_loss: 0.5703 - val_precision: 0.7822 - val_recall: 0.6365
+Epoch 3/10
+886/886 - 14s - 15ms/step - accuracy: 0.8228 - loss: 0.3754 - precision: 0.8838 - recall: 0.7427 - val_accuracy: 0.7147 - val_loss: 0.6669 - val_precision: 0.7521 - val_recall: 0.6422
+Epoch 4/10
+886/886 - 14s - 15ms/step - accuracy: 0.8836 - loss: 0.2590 - precision: 0.9169 - recall: 0.8433 - val_accuracy: 0.7106 - val_loss: 0.8106 - val_precision: 0.7341 - val_recall: 0.6622
+Epoch 5/10
+886/886 - 13s - 15ms/step - accuracy: 0.9231 - loss: 0.1877 - precision: 0.9467 - recall: 0.8964 - val_accuracy: 0.7069 - val_loss: 0.9440 - val_precision: 0.7315 - val_recall: 0.6557
+Epoch 6/10
+886/886 - 13s - 15ms/step - accuracy: 0.9323 - loss: 0.1576 - precision: 0.9515 - recall: 0.9108 - val_accuracy: 0.7026 - val_loss: 1.0564 - val_precision: 0.7028 - val_recall: 0.7041
+Epoch 7/10
+886/886 - 13s - 15ms/step - accuracy: 0.9380 - loss: 0.1415 - precision: 0.9585 - recall: 0.9154 - val_accuracy: 0.7113 - val_loss: 1.0465 - val_precision: 0.7312 - val_recall: 0.6700
+Epoch 8/10
+886/886 - 13s - 15ms/step - accuracy: 0.9398 - loss: 0.1360 - precision: 0.9626 - recall: 0.9150 - val_accuracy: 0.7157 - val_loss: 1.0824 - val_precision: 0.7377 - val_recall: 0.6712
+Epoch 9/10
+886/886 - 13s - 15ms/step - accuracy: 0.9444 - loss: 0.1281 - precision: 0.9647 - recall: 0.9225 - val_accuracy: 0.7108 - val_loss: 1.2375 - val_precision: 0.7203 - val_recall: 0.6909
+Epoch 10/10
+886/886 - 13s - 15ms/step - accuracy: 0.9451 - loss: 0.1290 - precision: 0.9646 - recall: 0.9238 - val_accuracy: 0.7084 - val_loss: 1.1524 - val_precision: 0.7160 - val_recall: 0.6926
+[1m  1/277[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m14s[0m 54ms/step[1m 25/277[0m [32m━[0m[37m━━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 2ms/step  [1m 48/277[0m [32m━━━[0m[37m━━━━━━━━━━━━━━━━━[0m [1m0s[0m 2ms/step[1m 73/277[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 2ms/step[1m 99/277[0m [32m━━━━━━━[0m[37m━━━━━━━━━━━━━[0m [1m0s[0m 2ms/step[1m123/277[0m [32m━━━━━━━━[0m[37m━━━━━━━━━━━━[0m [1m0s[0m 2ms/step[1m146/277[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 2ms/step[1m168/277[0m [32m━━━━━━━━━━━━[0m[37m━━━━━━━━[0m [1m0s[0m 2ms/step[1m192/277[0m [32m━━━━━━━━━━━━━[0m[37m━━━━━━━[0m [1m0s[0m 2ms/step[1m218/277[0m [32m━━━━━━━━━━━━━━━[0m[37m━━━━━[0m [1m0s[0m 2ms/step[1m242/277[0m [32m━━━━━━━━━━━━━━━━━[0m[37m━━━[0m [1m0s[0m 2ms/step[1m267/277[0m [32m━━━━━━━━━━━━━━━━━━━[0m[37m━[0m [1m0s[0m 2ms/step[1m277/277[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 2ms/step
+Final Accuracy on test set: 0.7086720867208672
+Final Precision on test set: 0.7157772621809745
+Final Recall on test set: 0.6948198198198198
+Final F1 Score on test set: 0.7051428571428572
+Conda ML gpu job finished at Sun Aug 11 23:26:49 AWST 2024
+Total Runtime: 00:02:42

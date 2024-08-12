@@ -37,6 +37,12 @@ Comments:
 - Followed by LightGBM (good for [large datasets](https://www.kaggle.com/code/prashant111/lightgbm-classifier-in-python))
 - Followed by Random Forest 
 
+Default settings utilised:
+- Random forest: [MSE](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html)
+- XGBRegressor: [MSE](https://xgboost.readthedocs.io/en/stable/parameter.html)
+- LightGBM: [MSE](https://lightgbm.readthedocs.io/en/latest/Parameters.html)
+- SVM: [Epsilon Insensitive Loss](https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVR.html)
+
 Stage 2: Use classification (tree-based) models to predict 0 expected count or non-0 expected count (using precision, recall and F1)
 
 
@@ -279,8 +285,66 @@ Notes:
 - Trade-off with slight increase in precision and decrease in recall
 - Overall, worse performance than 2 layer model (based on F1)
 
+### Multi-layer NN (with 2 linear hidden layers [1000, 500] + dropout(0.5) +  ReLU)
+
+<br />
+
+*Balanced classes & Drop-out* - Note: dropout applied to first hidden layer before ReLU
+
+| Data set | Accuracy | Precision | Recall | F1 |
+| ------------- | ------------- | ------------- | ------------- | ------------- |
+| Train | 0.9481 | 0.9865 | 0.9085 | 0.9459 |
+| Test | 0.7136 | 0.7497 | 0.6437 | 0.6927 |
+
+
+Notes:
+- Generalises poorly to new data
+- Will introduce stricter regularisation and less neurons
+
+
+### Multi-layer NN (with 3 linear hidden layers [1000, 500] + dropout(0.5) + weight decay(1e-4) +  ReLU)
+
+<br />
+
+*Balanced classes, Drop-out & Weight Decay (L2)* 
+
+| Data set | Accuracy | Precision | Recall | F1 |
+| ------------- | ------------- | ------------- | ------------- | ------------- |
+| Train | 0.9184 | 0.9681 | 0.8652 | 0.9138 |
+| Test | 0.7184 | 0.7617 | 0.6378 | 0.6943 |
+
+
+Notes:
+- Slight improvement to generalisation
+- Will try L1 regularisation instead of L2
+
+<br />
+
+*Balanced classes, Drop-out & L1* 
+
+| Data set | Accuracy | Precision | Recall | F1 |
+| ------------- | ------------- | ------------- | ------------- | ------------- |
+| Train | 0.8763 | 0.9371 | 0.8065 | 0.8491 |
+| Test | 0.7136 | 0.7508 | 0.6419 | 0.6921 |
+
+
+Notes:
+- Similar if not slightly worse than L2
+- Will return to L2 and run for more iterations to see if that helps
+
+<br />
+
+*Balanced classes, Drop-out & L2 - increased iterations* 
+- iterate for 100 epochs
+
+| Data set | Accuracy | Precision | Recall | F1 |
+| ------------- | ------------- | ------------- | ------------- | ------------- |
+| Train | 0.9237 | 0.9672 | 0.8770 | 0.9200 |
+| Test | 0.7144 | 0.7401 | 0.6633 | 0.6996 |
 
 ## Restricted Boltzman Machine
+Source used for code template: [Beginners Guide to Boltzmann Machine](https://blog.paperspace.com/beginners-guide-to-boltzmann-machines-pytorch/)
+
 
 Questions: 
 - Would we use this on all 4 data types at once? - K9, K27, DNAm, expression
@@ -308,8 +372,63 @@ Model Overview:
 *Note: classes were not balanced for this baseline
 
 
-*Final Reconstruction Error*
+*Final Reconstruction Error - hidden layer [256]*
 <br />
 | Silent Genes | Non-silent Genes |
 | ------------- | ------------- |
 | 1025.5759 | 1121.8776 |
+
+- around 1000 values are wrong out of 12000? Is this the correct interpretation?
+
+![Reconstruction Error Over Iterations - RBM V1](slurm_output/init_RBM_results/Reconstruction_Error_over_Iterations.png)
+
+Notes: 
+- based on this, will run for another 50 iters (100 total) to see impact on error reduction
+- Silenced genes appear easier to regenerate
+
+## Multi-Layer Perceptrons
+
+### Predicting Expression
+
+- Starting with dense layers [500, 300] and lr_scheduler
+
+| Data set | Accuracy | Precision | Recall | F1 |
+| ------------- | ------------- | ------------- | ------------- | ------------- |
+| Train | 0.9428 | 0.9679 | 0.9158 | - |
+| Test | 0.7086 | 0.7328 | 0.6590 | 0.6939 |
+
+Notes:
+- Noticed the validation loss increased quite a bit at the start and then plateaud after around 8 iteration
+- Will introduce L2 reg and increased iters with early stopping
+
+<br />
+
+#### Expression: adding L2 (0.01) and early stopping (up to 150 iter)
+
+| Data set | Accuracy | Precision | Recall | F1 |
+| ------------- | ------------- | ------------- | ------------- | ------------- |
+| Train | 0.7308 | 0.8036 | 0.6038 | - |
+| Test | 0.7392 | 0.8259 | 0.6081 | 0.7005 |
+
+Notes: 
+- slight improvement
+- not sure what happened here with the training data - seemed much lower
+
+### Predicting DNAm 
+VECTOR REGRESSION
+- Note: discussed using vector regression but wondering if I have confused myself due to our conversations around DNAm count (when we are predicting a binary value - should we be using multi-output classification approach instead?)
+
+| Data set | Accuracy | Precision | Recall | F1 |
+| ------------- | ------------- | ------------- | ------------- | ------------- |
+
+<br />
+
+
+MULTI-OUTPUT CLASSIFICATION
+
+<br />
+
+| Data set | Accuracy | Precision | Recall | F1 |
+| ------------- | ------------- | ------------- | ------------- | ------------- |
+
+

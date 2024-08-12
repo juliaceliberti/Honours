@@ -6,9 +6,10 @@ import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import precision_score, recall_score, f1_score, accuracy_score
+from torch.utils.data import DataLoader, TensorDataset
 
 # Prepare the data
-undersample = False
+undersample = True
 
 # Load data prepared for the model
 gene_matrix_array = np.load("gene_matrix_list.npy")
@@ -63,17 +64,21 @@ y_train = torch.tensor(y_train, dtype=torch.long)
 X_test = torch.tensor(X_test, dtype=torch.float32)
 y_test = torch.tensor(y_test, dtype=torch.long)
 
+# prepare batches for training
+train_dataset = TensorDataset(X_train, y_train)
+train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
+
 
 # Define the model
 class SingleLayerNN(nn.Module):
     def __init__(self, input_size, num_classes):
         super(SingleLayerNN, self).__init__()
         self.fc = nn.Linear(input_size, num_classes)
-        self.batch_norm = nn.BatchNorm1d(input_size)  # Add batch normalization
+        self.dropout = nn.Dropout(p=0.5)  # Add drop out for regularsation
 
     def forward(self, x):
-        x = self.batch_norm(x)  # Apply batch normalization
         x = self.fc(x)
+        x = self.dropout(x)  # Apply dropout after the fc layer
         return x
 
 
@@ -81,11 +86,13 @@ class SingleLayerNN(nn.Module):
 input_size = 4000 * 3  # Input size (4000 base pairs * 3 features)
 num_classes = 2  # Number of output classes (binary classification)
 
-# Instantiate the model
+# init the model
 model = SingleLayerNN(input_size, num_classes)
 
 # Define loss function and optimizer
-criterion = nn.CrossEntropyLoss()
+criterion = (
+    nn.BCEWithLogitsLoss()
+)  # using BCE as data is binary and is combined with a sigmoid layer
 optimizer = optim.Adam(model.parameters(), lr=0.001)
 
 # Training loop
@@ -93,14 +100,15 @@ epochs = 10
 for epoch in range(epochs):
     model.train()
     running_loss = 0.0
-    optimizer.zero_grad()
-    outputs = model(X_train)
-    loss = criterion(outputs, y_train)
-    loss.backward()
-    optimizer.step()
-    running_loss += loss.item()
-
+    for inputs, labels in train_loader:
+        optimizer.zero_grad()
+        outputs = model(inputs)
+        loss = criterion(outputs, labels)
+        loss.backward()
+        optimizer.step()
+        running_loss += loss.item()
     print(f"Epoch {epoch+1}, Loss: {running_loss}")
+
 
 # Evaluation
 model.eval()

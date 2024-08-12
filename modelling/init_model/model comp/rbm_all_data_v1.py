@@ -1,3 +1,5 @@
+# Restricted Boltzmann Model using all data (DNAm, K9, K27, expression)
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -15,29 +17,21 @@ assert gene_matrix_array.shape[0] == len(
     rna_expression_df
 ), "Mismatch in number of genes"
 
-# Separate modification types
+# separate modification types
 dnam_features = gene_matrix_array[:, :, 0]
 h3k9me3_features = gene_matrix_array[:, :, 1]
 h3k27me3_features = gene_matrix_array[:, :, 2]
+expression_values = rna_expression_df["expression"].values.reshape(
+    -1, 1
+)  # to make 2D like other features
 
-# concat features to make 1D
-X = np.concatenate((dnam_features, h3k9me3_features, h3k27me3_features), axis=1)
+# concat all features, including expression, to make 1D
+X = np.concatenate(
+    (dnam_features, h3k9me3_features, h3k27me3_features, expression_values), axis=1
+)
 
-# Separate expression values
-expression_values = rna_expression_df["expression"].values
-
-# separate data into silent and non-silent based on expression values
-silent_indices = np.where(expression_values == 0)[0]  # Indices of silent genes
-non_silent_indices = np.where(expression_values > 0)[0]  # Indices of non-silent genes
-
-X_silent = X[silent_indices]  # Silent gene data
-X_non_silent = X[non_silent_indices]  # Non-silent gene data
-
-# Convert data to PyTorch tensors
-X_silent = torch.tensor(X[silent_indices], dtype=torch.float32)  # Silent gene data
-X_non_silent = torch.tensor(
-    X[non_silent_indices], dtype=torch.float32
-)  # Non-silent gene data
+# convert data to PyTorch tensors
+X = torch.tensor(X, dtype=torch.float32)
 
 
 ### RBM CLASS DEFINITION
@@ -82,12 +76,11 @@ class RBM(nn.Module):
         return torch.mean(torch.sum((v - v_reconstructed) ** 2, dim=1))
 
 
-# init RBM models
-n_visible = X_silent.shape[1]
+# init RBM model
+n_visible = X.shape[1]  # 12001
 n_hidden = 256
 
-rbm_silent = RBM(n_visible, n_hidden)
-rbm_non_silent = RBM(n_visible, n_hidden)
+rbm = RBM(n_visible, n_hidden)
 
 
 # Function to train RBM and track metrics
@@ -112,26 +105,20 @@ def train(rbm, data, n_iter, lr=0.1, k=1):
     return reconstruction_errors
 
 
-# Train RBMs and track reconstruction errors
+# train RBM and track reconstruction errors
 n_iterations = 100
-reconstruction_errors_silent = train(rbm_silent, X_silent, n_iterations)
-reconstruction_errors_non_silent = train(rbm_non_silent, X_non_silent, n_iterations)
+reconstruction_errors = train(rbm, X, n_iterations)
 
-# Save the trained models
-torch.save(rbm_silent.state_dict(), "rbm_silent_100.pth")
-torch.save(rbm_non_silent.state_dict(), "rbm_non_silent_100.pth")
+# Save model
+torch.save(rbm.state_dict(), "rbm_model_12001.pth")
 
-# Save the reconstruction error plot
-plt.plot(reconstruction_errors_silent, label="Silent Genes")
-plt.plot(reconstruction_errors_non_silent, label="Non-Silent Genes")
+# Save error plot
+plt.plot(reconstruction_errors, label="Reconstruction Error")
 plt.xlabel("Iterations")
 plt.ylabel("Reconstruction Error")
 plt.title("Reconstruction Error over 100 Iterations")
 plt.legend()
-plt.savefig("reconstruction_error_over_100_iterations.png")
+plt.savefig("reconstruction_error_over_100_iterations_all_data.png")
 
-# Print the final reconstruction error
-print(f"Final Reconstruction Error (Silent Genes): {reconstruction_errors_silent[-1]}")
-print(
-    f"Final Reconstruction Error (Non-Silent Genes): {reconstruction_errors_non_silent[-1]}"
-)
+# print final error
+print(f"Final Reconstruction Error: {reconstruction_errors[-1]}")

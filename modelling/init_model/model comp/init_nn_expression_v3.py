@@ -6,6 +6,7 @@ import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import precision_score, recall_score, f1_score, accuracy_score
+from torch.utils.data import DataLoader, TensorDataset
 
 # Prepare the data
 undersample = True
@@ -63,6 +64,10 @@ y_train = torch.tensor(y_train, dtype=torch.long)
 X_test = torch.tensor(X_test, dtype=torch.float32)
 y_test = torch.tensor(y_test, dtype=torch.long)
 
+# prepare batches for training
+train_dataset = TensorDataset(X_train, y_train)
+train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
+
 
 # Define the model
 class MultiLayerNN(nn.Module):
@@ -71,34 +76,26 @@ class MultiLayerNN(nn.Module):
     ):
         super(MultiLayerNN, self).__init__()
         self.fc1 = nn.Linear(input_size, hidden_size1)
-        self.batch_norm1 = nn.BatchNorm1d(hidden_size1)  # Add batch normalisation
+        self.dropout = nn.Dropout(p=0.5)  # Add drop out for regularsation
         self.relu1 = nn.ReLU()  # ReLU activation after 1st layer
 
         self.fc2 = nn.Linear(hidden_size1, hidden_size2)  # Second fully connected layer
-        self.batch_norm2 = nn.BatchNorm1d(
-            hidden_size2
-        )  # Batch normalisation after the second layer
         self.relu2 = nn.ReLU()  # ReLU activation after 2nd layer
 
-        self.fc3 = nn.Linear(hidden_size2, hidden_size3)  # Output layer
-        self.batch_norm3 = nn.BatchNorm1d(
-            hidden_size3
-        )  # Batch normalisation after the second layer
+        self.fc3 = nn.Linear(hidden_size2, hidden_size3)  # third fc layer
         self.relu3 = nn.ReLU()  # ReLU activation after 2nd layer
 
-        self.fc4 = nn.Linear(hidden_size3, num_classes)
+        self.fc4 = nn.Linear(hidden_size3, 1)  # single output for BCE
 
     def forward(self, x):
         x = self.fc1(x)
-        x = self.batch_norm1(x)
+        x = self.dropout(x)
         x = self.relu1(x)
 
         x = self.fc2(x)
-        x = self.batch_norm2(x)
         x = self.relu2(x)
 
         x = self.fc3(x)
-        x = self.batch_norm3(x)
         x = self.relu3(x)
 
         x = self.fc4(x)
@@ -107,17 +104,19 @@ class MultiLayerNN(nn.Module):
 
 # Define the model parameters
 input_size = 4000 * 3  # Input size (4000 base pairs * 3 features)
-hidden_size1 = 12000  # first hidden layer
-hidden_size2 = 12000  # second hidden layer
-hidden_size3 = 12000  # third hidden layer
+hidden_size1 = 1000  # first hidden layer
+hidden_size2 = 500  # second hidden layer
+hidden_size3 = 500  # third hidden layer
 
 num_classes = 2  # Number of output classes (binary classification)
 
-# Instantiate the model
+# init model
 model = MultiLayerNN(input_size, hidden_size1, hidden_size2, hidden_size3, num_classes)
 
 # Define loss function and optimizer
-criterion = nn.CrossEntropyLoss()
+criterion = (
+    nn.BCEWithLogitsLoss()
+)  # using BCE as data is binary and is combined with a sigmoid layer
 optimizer = optim.Adam(model.parameters(), lr=0.001)
 
 # Training loop
@@ -125,20 +124,42 @@ epochs = 10
 for epoch in range(epochs):
     model.train()
     running_loss = 0.0
-    optimizer.zero_grad()
-    outputs = model(X_train)
-    loss = criterion(outputs, y_train)
-    loss.backward()
-    optimizer.step()
-    running_loss += loss.item()
+    all_labels = []
+    all_predictions = []
 
-    print(f"Epoch {epoch+1}, Loss: {running_loss}")
+    for inputs, labels in train_loader:
+        optimizer.zero_grad()
+        outputs = model(inputs).squeeze()  # Squeeze outputs to match label shape
+        loss = criterion(outputs, labels.float())  # Convert labels float
+        loss.backward()
+        optimizer.step()
+        running_loss += loss.item()
+        # convert outputs to binary predictions
+        predicted = (outputs > 0.5).int()
+        all_labels.extend(labels.numpy())
+        all_predictions.extend(predicted.numpy())
+
+    # calc training metrics
+    all_labels = np.array(all_labels)
+    all_predictions = np.array(all_predictions)
+    train_accuracy = accuracy_score(all_labels, all_predictions)
+    train_precision = precision_score(all_labels, all_predictions)
+    train_recall = recall_score(all_labels, all_predictions)
+    train_f1 = f1_score(all_labels, all_predictions)
+
+    print(
+        f"Epoch {epoch+1}, Loss: {running_loss}, "
+        f"Training Accuracy: {train_accuracy}, "
+        f"Training Precision: {train_precision}, "
+        f"Training Recall: {train_recall}, "
+        f"Training F1 Score: {train_f1}"
+    )
 
 # Evaluation
 model.eval()
 with torch.no_grad():
-    outputs = model(X_test)
-    _, predicted = torch.max(outputs.data, 1)
+    outputs = model(X_test).squeeze()
+    predicted = (outputs > 0.5).int()  # threshold for binary class
     total = y_test.size(0)
     correct = (predicted == y_test).sum().item()
     accuracy = 100 * correct / total

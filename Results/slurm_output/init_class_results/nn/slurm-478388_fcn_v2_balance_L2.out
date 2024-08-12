@@ -1,0 +1,20 @@
+Job Name: genejc_nn_expression_v2_weightDecay_120824
+Script: init_nn_expression_v2.py
+Working SCRATCH directory is /scratch/pmc019/jceliberti/run_conda/478388
+Results will be store in /group/pmc019/jceliberti/conda_results/478388
+Epoch 1, Loss: 638.9428827166557, Training Accuracy: 0.7147656691134952, Training Precision: 0.829044276925743, Training Recall: 0.5406260594417448, Training F1 Score: 0.6544683470706932
+Epoch 2, Loss: 582.8172657191753, Training Accuracy: 0.7377188029361943, Training Precision: 0.862914364640884, Training Recall: 0.5648095830037292, Training F1 Score: 0.6827402499829247
+Epoch 3, Loss: 531.6808747500181, Training Accuracy: 0.7594579333709769, Training Precision: 0.8946508427932577, Training Recall: 0.5878065318115041, Training F1 Score: 0.7094728227511423
+Epoch 4, Loss: 435.70697359740734, Training Accuracy: 0.8026256352343308, Training Precision: 0.9259288726231204, Training Recall: 0.6575884280709685, Training F1 Score: 0.7690223675950706
+Epoch 5, Loss: 310.1758062765002, Training Accuracy: 0.8749011857707509, Training Precision: 0.9452312235720518, Training Recall: 0.7957396315967906, Training F1 Score: 0.8640672454520355
+Epoch 6, Loss: 250.88850761204958, Training Accuracy: 0.9046583850931676, Training Precision: 0.9614021522005284, Training Recall: 0.8430331110859984, Training F1 Score: 0.8983351898124454
+Epoch 7, Loss: 223.32443559542298, Training Accuracy: 0.9138057594579334, Training Precision: 0.9670259582881562, Training Recall: 0.85670697253927, Training F1 Score: 0.9085298259280343
+Epoch 8, Loss: 223.2772413175553, Training Accuracy: 0.9157538114059853, Training Precision: 0.9664595485670809, Training Recall: 0.8612837608769353, Training F1 Score: 0.910845533313415
+Epoch 9, Loss: 221.3758265376091, Training Accuracy: 0.9148785996612083, Training Precision: 0.9651523791421149, Training Recall: 0.8607187252796926, Training F1 Score: 0.9099489262566829
+Epoch 10, Loss: 215.79767463728786, Training Accuracy: 0.9184359119141727, Training Precision: 0.9681355503572106, Training Recall: 0.8652390100576336, Training F1 Score: 0.9137997911382962
+Accuracy: 71.8383017163505%
+Precision: 0.7616998386229156
+Recall: 0.6378378378378379
+F1 Score: 0.6942878156410885
+Conda ML gpu job finished at Mon Aug 12 12:29:09 AWST 2024
+Total Runtime: 00:07:03
