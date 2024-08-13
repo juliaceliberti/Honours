@@ -285,6 +285,7 @@ Notes:
 - Trade-off with slight increase in precision and decrease in recall
 - Overall, worse performance than 2 layer model (based on F1)
 
+### Switching to Binary Cross Entropy Loss
 ### Multi-layer NN (with 2 linear hidden layers [1000, 500] + dropout(0.5) +  ReLU)
 
 <br />
@@ -372,7 +373,7 @@ Model Overview:
 *Note: classes were not balanced for this baseline
 
 
-*Final Reconstruction Error - hidden layer [256]*
+*Final Reconstruction Error - hidden layer [256] - 50 epochs*
 <br />
 | Silent Genes | Non-silent Genes |
 | ------------- | ------------- |
@@ -380,11 +381,42 @@ Model Overview:
 
 - around 1000 values are wrong out of 12000? Is this the correct interpretation?
 
+
 ![Reconstruction Error Over Iterations - RBM V1](slurm_output/init_RBM_results/Reconstruction_Error_over_Iterations.png)
+
+<br />
 
 Notes: 
 - based on this, will run for another 50 iters (100 total) to see impact on error reduction
 - Silenced genes appear easier to regenerate
+
+<br />
+
+*Final Reconstruction Error  - 150 epochs*
+
+
+
+| Silent Genes | Non-silent Genes |
+| ------------- | ------------- |
+| 588.2177 | 538.4178 |
+
+- What is the correct way to balance fitting to noise vs fitting underlying trend
+- how to approach masking?
+
+
+![Reconstruction Error Over Iterations - RBM V1](slurm_output/init_RBM_results/reconstruction_error_over_150_iterations.png)
+
+
+#### Creating an RBM to take in all data at once (no silent/non-silent split)
+*Final Reconstruction Error - over 100 iterations*
+| All Genes | 
+| ------------- | 
+| 12922250 | 
+
+- something not right here!
+
+![Reconstruction Error Over Iterations - RBM V1](slurm_output/init_RBM_results/reconstruction_error_over_100_iterations_all_data.png)
+
 
 ## Multi-Layer Perceptrons
 
@@ -413,6 +445,7 @@ Notes:
 Notes: 
 - slight improvement
 - not sure what happened here with the training data - seemed much lower
+- also, over the 82 iterations used (due to early stopping) val loss started at 0.7465 and only decreased to around 0.64 - when more complex, seems to overfit but now doesn't seem to be fitting as well
 
 ### Predicting DNAm 
 VECTOR REGRESSION

@@ -45,6 +45,8 @@ elif target == "k27":
         (dnam_features, h3k9me3_features, rna_expression.reshape(-1, 1)), axis=1
     )  # 1D 8001 binary array
 
+y = y.reshape(y.shape[0], -1)  # make 1D
+
 # Training and testing
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42
@@ -53,16 +55,16 @@ X_train, X_test, y_train, y_test = train_test_split(
 tf.random.set_seed(42)
 
 # Model params
-input_size = 8001  # expression (1) + K9 (4000) + K27 (4000)
-output_size = 4000  # predict DNAm at each position (4000)
+input_size = X_train.shape[1]  # 8001 - K9, K27, DNAm
+output_size = y_train.shape[1]  # predict DNAm at each position (4000)
 batch_size = 32
 epochs = 150
 
 # Early stopping callback
 early_stopping = tf.keras.callbacks.EarlyStopping(
-    monitor="val_loss",  # Monitor validation loss
-    patience=20,  # Stop after 5 epochs with no improvement
-    restore_best_weights=True,  # Restore the best model weights
+    monitor="val_loss",  # use val loss for monitoring
+    patience=10,  # stop after 10 epochs with no improvement
+    restore_best_weights=True,  # best model weights
 )
 
 # Defining the MLP for Vector Regression
@@ -77,7 +79,7 @@ model = tf.keras.Sequential(
         tf.keras.layers.Dropout(0.5),
         tf.keras.layers.Dense(500, activation="relu", kernel_initializer="he_normal"),
         tf.keras.layers.Dense(
-            output_size, activation="linear"
+            output_size, activation="sigmoid"
         ),  # Output layer for vector regression
     ]
 )
@@ -86,7 +88,7 @@ model = tf.keras.Sequential(
 model.compile(
     optimizer="adam",
     loss="mean_squared_error",  # Using MSE for regression
-    metrics=["mae"],  # Mean Absolute Error as an additional metric
+    metrics=["mae", "mse"],  # Mean Absolute Error as an additional metric
 )
 
 # Train the model
@@ -105,10 +107,12 @@ predictions = model.predict(X_test)
 binary_predictions = (predictions > 0.5).astype(int)
 
 # Evaluate the model with classification metrics
-accuracy = accuracy_score(y_test, binary_predictions)
-precision = precision_score(y_test, binary_predictions, average="micro")
-recall = recall_score(y_test, binary_predictions, average="micro")
-f1 = f1_score(y_test, binary_predictions, average="micro")
+accuracy = accuracy_score(y_test.flatten(), binary_predictions.flatten())
+precision = precision_score(
+    y_test.flatten(), binary_predictions.flatten(), average="micro"
+)
+recall = recall_score(y_test.flatten(), binary_predictions.flatten(), average="micro")
+f1 = f1_score(y_test.flatten(), binary_predictions.flatten(), average="micro")
 
 print(f"Accuracy: {accuracy}")
 print(f"Precision: {precision}")
