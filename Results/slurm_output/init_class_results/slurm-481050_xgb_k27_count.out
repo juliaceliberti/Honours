@@ -1,0 +1,9 @@
+Job Name: genejc_xgb_k27_count_210824
+Script: xgb_histone_count.py
+Working SCRATCH directory is /scratch/pmc019/jceliberti/run_conda/481050
+Results will be store in /group/pmc019/jceliberti/conda_results/481050
+XGB Regressor metrics:
+Mean Absolute Error (MAE): 73.7287823934648
+Mean Squared Error (MSE): 34807.964611449264
+Conda ML gpu job finished at Wed Aug 21 16:05:27 AWST 2024
+Total Runtime: 00:00:15

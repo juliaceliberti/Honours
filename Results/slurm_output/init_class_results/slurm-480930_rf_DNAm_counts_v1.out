@@ -1,0 +1,26 @@
+Job Name: genejc_rf_class_dnam_200824
+Script: dnam_rf_class.py
+Working SCRATCH directory is /scratch/pmc019/jceliberti/run_conda/480930
+Results will be store in /group/pmc019/jceliberti/conda_results/480930
+/home/jceliberti/.conda/envs/gene_new/lib/python3.12/site-packages/sklearn/metrics/_classification.py:1531: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+/home/jceliberti/.conda/envs/gene_new/lib/python3.12/site-packages/sklearn/metrics/_classification.py:1531: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+Validation Accuracy: 0.013801463082681185
+Validation Precision: 0.0075
+Validation Recall: 5.484994909271111e-06
+Validation F1 Score: 1.0959482290654677e-05
+Test Accuracy: 0.013950323239197007
+Test Precision: 0.0
+Test Recall: 0.0
+Test F1 Score: 0.0
+Confusion Matrix:
+[[481   0   0 ...   0   0   0]
+ [162   0   0 ...   0   0   0]
+ [134   0   0 ...   0   0   0]
+ ...
+ [  1   0   0 ...   0   0   0]
+ [  1   0   0 ...   0   0   0]
+ [  1   0   0 ...   0   0   0]]
+Conda ML gpu job finished at Tue Aug 20 22:03:17 AWST 2024
+Total Runtime: 00:15:11

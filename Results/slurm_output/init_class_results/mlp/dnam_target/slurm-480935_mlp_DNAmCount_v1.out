@@ -1,0 +1,43 @@
+Job Name: genejc_mlp_dnam_count_v1_200824
+Script: mlp_dnam_count_v1.py
+Working SCRATCH directory is /scratch/pmc019/jceliberti/run_conda/480935
+Results will be store in /group/pmc019/jceliberti/conda_results/480935
+2024-08-20 22:10:37.619034: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2024-08-20 22:10:37.656860: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: SSE4.1 SSE4.2 AVX AVX2 AVX512F AVX512_VNNI FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+/home/jceliberti/.conda/envs/gene_new/lib/python3.12/site-packages/keras/src/layers/core/dense.py:87: UserWarning: Do not pass an `input_shape`/`input_dim` argument to a layer. When using Sequential models, prefer using an `Input(shape)` object as the first layer in the model instead.
+  super().__init__(activity_regularizer=activity_regularizer, **kwargs)
+Epoch 1/100
+1176/1176 - 14s - 12ms/step - loss: 8910.3027 - mean_squared_error: 8910.3027 - val_loss: 7761.0029 - val_mean_squared_error: 7761.0029
+Epoch 2/100
+1176/1176 - 12s - 10ms/step - loss: 7433.0005 - mean_squared_error: 7433.0005 - val_loss: 7574.7393 - val_mean_squared_error: 7574.7393
+Epoch 3/100
+1176/1176 - 12s - 10ms/step - loss: 7334.2700 - mean_squared_error: 7334.2700 - val_loss: 7494.7080 - val_mean_squared_error: 7494.7080
+Epoch 4/100
+1176/1176 - 12s - 10ms/step - loss: 7264.4082 - mean_squared_error: 7264.4082 - val_loss: 7505.7930 - val_mean_squared_error: 7505.7930
+Epoch 5/100
+1176/1176 - 12s - 10ms/step - loss: 7210.7349 - mean_squared_error: 7210.7349 - val_loss: 7480.1836 - val_mean_squared_error: 7480.1836
+Epoch 6/100
+1176/1176 - 12s - 10ms/step - loss: 7163.4526 - mean_squared_error: 7163.4526 - val_loss: 7493.0894 - val_mean_squared_error: 7493.0894
+Epoch 7/100
+1176/1176 - 12s - 11ms/step - loss: 7119.4263 - mean_squared_error: 7119.4263 - val_loss: 7500.0015 - val_mean_squared_error: 7500.0015
+Epoch 8/100
+1176/1176 - 12s - 10ms/step - loss: 7078.1797 - mean_squared_error: 7078.1797 - val_loss: 7514.6035 - val_mean_squared_error: 7514.6035
+Epoch 9/100
+1176/1176 - 12s - 10ms/step - loss: 7031.1885 - mean_squared_error: 7031.1885 - val_loss: 7564.6147 - val_mean_squared_error: 7564.6147
+Epoch 10/100
+1176/1176 - 12s - 10ms/step - loss: 6982.9116 - mean_squared_error: 6982.9116 - val_loss: 7648.8633 - val_mean_squared_error: 7648.8633
+Epoch 11/100
+1176/1176 - 12s - 10ms/step - loss: 6932.1919 - mean_squared_error: 6932.1919 - val_loss: 7739.0776 - val_mean_squared_error: 7739.0776
+Epoch 12/100
+1176/1176 - 12s - 10ms/step - loss: 6877.1143 - mean_squared_error: 6877.1143 - val_loss: 7800.7461 - val_mean_squared_error: 7800.7461
+Epoch 13/100
+1176/1176 - 12s - 10ms/step - loss: 6831.5049 - mean_squared_error: 6831.5049 - val_loss: 7884.4937 - val_mean_squared_error: 7884.4937
+Epoch 14/100
+1176/1176 - 12s - 10ms/step - loss: 6787.6597 - mean_squared_error: 6787.6597 - val_loss: 7976.4668 - val_mean_squared_error: 7976.4668
+Epoch 15/100
+1176/1176 - 12s - 10ms/step - loss: 6757.6934 - mean_squared_error: 6757.6934 - val_loss: 7991.9966 - val_mean_squared_error: 7991.9966
+[1m  1/368[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m21s[0m 59ms/step[1m 14/368[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m1s[0m 4ms/step  [1m 29/368[0m [32m━[0m[37m━━━━━━━━━━━━━━━━━━━[0m [1m1s[0m 4ms/step[1m 46/368[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m1s[0m 3ms/step[1m 63/368[0m [32m━━━[0m[37m━━━━━━━━━━━━━━━━━[0m [1m1s[0m 3ms/step[1m 79/368[0m [32m━━━━[0m[37m━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step[1m 96/368[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step[1m112/368[0m [32m━━━━━━[0m[37m━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step[1m128/368[0m [32m━━━━━━[0m[37m━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step[1m144/368[0m [32m━━━━━━━[0m[37m━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step[1m163/368[0m [32m━━━━━━━━[0m[37m━━━━━━━━━━━━[0m [1m0s[0m 3ms/step[1m177/368[0m [32m━━━━━━━━━[0m[37m━━━━━━━━━━━[0m [1m0s[0m 3ms/step[1m192/368[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 3ms/step[1m207/368[0m [32m━━━━━━━━━━━[0m[37m━━━━━━━━━[0m [1m0s[0m 3ms/step[1m222/368[0m [32m━━━━━━━━━━━━[0m[37m━━━━━━━━[0m [1m0s[0m 3ms/step[1m240/368[0m [32m━━━━━━━━━━━━━[0m[37m━━━━━━━[0m [1m0s[0m 3ms/step[1m258/368[0m [32m━━━━━━━━━━━━━━[0m[37m━━━━━━[0m [1m0s[0m 3ms/step[1m274/368[0m [32m━━━━━━━━━━━━━━[0m[37m━━━━━━[0m [1m0s[0m 3ms/step[1m288/368[0m [32m━━━━━━━━━━━━━━━[0m[37m━━━━━[0m [1m0s[0m 3ms/step[1m306/368[0m [32m━━━━━━━━━━━━━━━━[0m[37m━━━━[0m [1m0s[0m 3ms/step[1m324/368[0m [32m━━━━━━━━━━━━━━━━━[0m[37m━━━[0m [1m0s[0m 3ms/step[1m343/368[0m [32m━━━━━━━━━━━━━━━━━━[0m[37m━━[0m [1m0s[0m 3ms/step[1m363/368[0m [32m━━━━━━━━━━━━━━━━━━━[0m[37m━[0m [1m0s[0m 3ms/step[1m368/368[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 3ms/step
+Mean Squared Error on test set: 7566.148347117299
+Conda ML gpu job finished at Tue Aug 20 22:13:58 AWST 2024
+Total Runtime: 00:03:22

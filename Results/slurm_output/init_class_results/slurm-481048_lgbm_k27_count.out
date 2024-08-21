@@ -1,0 +1,14 @@
+Job Name: genejc_lgbm_k27_count_210824
+Script: lgbm_histone_count.py
+Working SCRATCH directory is /scratch/pmc019/jceliberti/run_conda/481048
+Results will be store in /group/pmc019/jceliberti/conda_results/481048
+[LightGBM] [Info] Auto-choosing col-wise multi-threading, the overhead of testing was 0.244246 seconds.
+You can set `force_col_wise=true` to remove the overhead.
+[LightGBM] [Info] Total Bins 16002
+[LightGBM] [Info] Number of data points in the train set: 47024, number of used features: 8001
+[LightGBM] [Info] Start training from score 43.360114
+LGBM Regressor metrics:
+Mean Absolute Error (MAE): 69.5736848436607
+Mean Squared Error (MSE): 32198.169477190888
+Conda ML gpu job finished at Wed Aug 21 16:00:46 AWST 2024
+Total Runtime: 00:00:13

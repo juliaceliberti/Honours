@@ -1,0 +1,46 @@
+Job Name: genejc_mlp_k9_count_v1_210824
+Script: mlp_k9_count_v1.py
+Working SCRATCH directory is /scratch/pmc019/jceliberti/run_conda/481031
+Results will be store in /group/pmc019/jceliberti/conda_results/481031
+2024-08-21 14:47:44.379446: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: SSE4.1 SSE4.2 AVX, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+/home/jceliberti/.conda/envs/gene_new/lib/python3.12/site-packages/keras/src/layers/core/dense.py:87: UserWarning: Do not pass an `input_shape`/`input_dim` argument to a layer. When using Sequential models, prefer using an `Input(shape)` object as the first layer in the model instead.
+  super().__init__(activity_regularizer=activity_regularizer, **kwargs)
+Epoch 1/100
+1176/1176 - 11s - 10ms/step - loss: 348281.0625 - mean_squared_error: 348263.8438 - val_loss: 365795.6562 - val_mean_squared_error: 365778.2812
+Epoch 2/100
+1176/1176 - 10s - 8ms/step - loss: 343718.0000 - mean_squared_error: 343700.2500 - val_loss: 363186.9062 - val_mean_squared_error: 363168.6875
+Epoch 3/100
+1176/1176 - 9s - 8ms/step - loss: 339077.2812 - mean_squared_error: 339057.8438 - val_loss: 359780.0000 - val_mean_squared_error: 359760.2500
+Epoch 4/100
+1176/1176 - 9s - 7ms/step - loss: 331881.8750 - mean_squared_error: 331861.1875 - val_loss: 356045.0625 - val_mean_squared_error: 356023.0000
+Epoch 5/100
+1176/1176 - 9s - 7ms/step - loss: 323096.3125 - mean_squared_error: 323073.5625 - val_loss: 352996.7812 - val_mean_squared_error: 352972.0625
+Epoch 6/100
+1176/1176 - 9s - 7ms/step - loss: 313831.8438 - mean_squared_error: 313805.5312 - val_loss: 351431.1250 - val_mean_squared_error: 351404.2188
+Epoch 7/100
+1176/1176 - 9s - 7ms/step - loss: 305836.2500 - mean_squared_error: 305808.2500 - val_loss: 351394.7812 - val_mean_squared_error: 351365.1562
+Epoch 8/100
+1176/1176 - 9s - 7ms/step - loss: 298538.1250 - mean_squared_error: 298507.6250 - val_loss: 352356.1875 - val_mean_squared_error: 352324.5938
+Epoch 9/100
+1176/1176 - 9s - 7ms/step - loss: 292560.6875 - mean_squared_error: 292528.1562 - val_loss: 353851.7500 - val_mean_squared_error: 353818.3750
+Epoch 10/100
+1176/1176 - 9s - 7ms/step - loss: 287183.8750 - mean_squared_error: 287149.4688 - val_loss: 355809.2812 - val_mean_squared_error: 355774.5000
+Epoch 11/100
+1176/1176 - 9s - 7ms/step - loss: 282041.7500 - mean_squared_error: 282005.8750 - val_loss: 358095.5000 - val_mean_squared_error: 358059.0312
+Epoch 12/100
+1176/1176 - 9s - 7ms/step - loss: 277198.0625 - mean_squared_error: 277160.8750 - val_loss: 360518.8438 - val_mean_squared_error: 360480.7812
+Epoch 13/100
+1176/1176 - 9s - 7ms/step - loss: 272226.9062 - mean_squared_error: 272187.5312 - val_loss: 362802.6875 - val_mean_squared_error: 362763.1875
+Epoch 14/100
+1176/1176 - 9s - 7ms/step - loss: 267043.0000 - mean_squared_error: 267002.7188 - val_loss: 365412.5625 - val_mean_squared_error: 365371.5312
+Epoch 15/100
+1176/1176 - 9s - 7ms/step - loss: 261952.2031 - mean_squared_error: 261909.9531 - val_loss: 367854.1250 - val_mean_squared_error: 367811.4062
+Epoch 16/100
+1176/1176 - 9s - 8ms/step - loss: 257192.6562 - mean_squared_error: 257149.7500 - val_loss: 370619.9688 - val_mean_squared_error: 370575.9062
+Epoch 17/100
+1176/1176 - 9s - 7ms/step - loss: 253232.5625 - mean_squared_error: 253187.7344 - val_loss: 372923.0938 - val_mean_squared_error: 372877.2812
+[1m  1/368[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m24s[0m 66ms/step[1m 28/368[0m [32m━[0m[37m━━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 2ms/step  [1m 64/368[0m [32m━━━[0m[37m━━━━━━━━━━━━━━━━━[0m [1m0s[0m 2ms/step[1m103/368[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 1ms/step[1m143/368[0m [32m━━━━━━━[0m[37m━━━━━━━━━━━━━[0m [1m0s[0m 1ms/step[1m183/368[0m [32m━━━━━━━━━[0m[37m━━━━━━━━━━━[0m [1m0s[0m 1ms/step[1m223/368[0m [32m━━━━━━━━━━━━[0m[37m━━━━━━━━[0m [1m0s[0m 1ms/step[1m262/368[0m [32m━━━━━━━━━━━━━━[0m[37m━━━━━━[0m [1m0s[0m 1ms/step[1m301/368[0m [32m━━━━━━━━━━━━━━━━[0m[37m━━━━[0m [1m0s[0m 1ms/step[1m340/368[0m [32m━━━━━━━━━━━━━━━━━━[0m[37m━━[0m [1m0s[0m 1ms/step[1m368/368[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 1ms/step[1m368/368[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 1ms/step
+Mean Squared Error on test set: 340942.964271117
+Conda ML gpu job finished at Wed Aug 21 14:50:46 AWST 2024
+Total Runtime: 00:03:04
