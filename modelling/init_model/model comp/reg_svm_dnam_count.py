@@ -40,10 +40,12 @@ def predict_dna_methylation():
     X_histone = np.concatenate(
         (h3k9me3_features, h3k27me3_features), axis=1
     )  # Shape (58780, 8000)
-    X_expression = rna_expression_df["expression"].values.reshape(
-        -1, 1
+    rna_expression = (rna_expression_df["expression"].values > 0).astype(
+        int
     )  # Shape (58780, 1)
-    X = np.concatenate((X_histone, X_expression), axis=1)  # Shape (58780, 8001)
+    expression_values = rna_expression.reshape(-1, 1)  # Shape (58780, 1)
+
+    X = np.concatenate((X_histone, expression_values), axis=1)  # Shape (58780, 8001)
 
     # Set DNA methylation as target - altering y to become a count of 1s in each 4000 length array
     y = np.sum(dnam_features, axis=1)  # Shape (58780,)
