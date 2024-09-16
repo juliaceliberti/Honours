@@ -22,8 +22,13 @@ dnam_features = gene_matrix_array[:, :, 0]  # Shape (58780, 4000)
 X_histone = np.concatenate(
     (h3k9me3_features, h3k27me3_features), axis=1
 )  # Shape (58780, 8000)
-rna_expression = (rna_expression_df["expression"].values > 0).astype(int)
-X_expression = rna_expression.reshape(-1, 1)  # Shape (58780, 1)
+
+### SWITCHING TO EXP COUNT
+# rna_expression = (rna_expression_df["expression"].values > 0).astype(int)
+# X_expression = rna_expression.reshape(-1, 1)  # Shape (58780, 1)
+
+X_expression = rna_expression_df["expression"].values.reshape(-1, 1)  # Shape (58780, 1)
+
 
 X = np.concatenate((X_histone, X_expression), axis=1)  # Shape (58780, 8001)
 
@@ -44,14 +49,15 @@ tf.random.set_seed(42)
 model = tf.keras.Sequential(
     [
         tf.keras.layers.Dense(
-            128, input_shape=(8001,), activation="relu", kernel_initializer="he_normal"
+            512, input_shape=(8001,), activation="relu", kernel_initializer="he_normal"
         ),
-        tf.keras.layers.Dropout(0.4),
+        tf.keras.layers.Dropout(0.2),
+        tf.keras.layers.Dense(256, activation="relu", kernel_initializer="he_normal"),
         tf.keras.layers.Dense(
-            64,
+            128,
             activation="relu",
             kernel_initializer="he_normal",
-            kernel_regularizer=tf.keras.regularizers.L1(l1=0.02),
+            kernel_regularizer=tf.keras.regularizers.L2(l2=0.01),
         ),
         tf.keras.layers.Dense(1, activation="linear"),  # Output layer for regression
     ]

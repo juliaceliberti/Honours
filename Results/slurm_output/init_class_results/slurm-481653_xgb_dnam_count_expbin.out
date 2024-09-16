@@ -1,0 +1,10 @@
+Job Name: genejc_xgb_dnam_count_expbinary_260824
+Script: reg_xgb_dnam_count.py
+Working SCRATCH directory is /scratch/pmc019/jceliberti/run_conda/481653
+Results will be store in /group/pmc019/jceliberti/conda_results/481653
+Random Forest Regressor metrics:
+Mean Absolute Error (MAE): 64.22687698830225
+Mean Squared Error (MSE): 7392.577486300502
+R-squared (R2): 0.28364774500245316
+Conda ML gpu job finished at Mon Aug 26 21:26:11 AWST 2024
+Total Runtime: 00:00:14

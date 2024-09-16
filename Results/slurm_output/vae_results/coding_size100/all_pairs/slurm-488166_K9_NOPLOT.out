@@ -1,0 +1,8 @@
+Job Name: genejc_vae_all_pairs_DNAm_100_150924
+Script: vae_all_pairs_v1.py
+Working SCRATCH directory is /scratch/pmc019/jceliberti/run_conda/488166
+Results will be store in /group/pmc019/jceliberti/conda_results/488166
+2024-09-15 16:31:31.577687: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2024-09-15 16:31:31.612978: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: SSE4.1 SSE4.2 AVX AVX2 AVX512F AVX512_VNNI FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+slurmstepd: error: *** JOB 488166 ON n018 CANCELLED AT 2024-09-15T16:31:35 ***

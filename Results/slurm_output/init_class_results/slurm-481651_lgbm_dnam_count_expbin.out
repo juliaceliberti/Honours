@@ -1,0 +1,16 @@
+Job Name: genejc_lgbm_dnam_count_expbinary_260824
+Script: reg_lgbm_dnam_count.py
+Working SCRATCH directory is /scratch/pmc019/jceliberti/run_conda/481651
+Results will be store in /group/pmc019/jceliberti/conda_results/481651
+[LightGBM] [Info] Auto-choosing row-wise multi-threading, the overhead of testing was 0.160685 seconds.
+You can set `force_row_wise=true` to remove the overhead.
+And if memory is not enough, you can set `force_col_wise=true`.
+[LightGBM] [Info] Total Bins 16002
+[LightGBM] [Info] Number of data points in the train set: 47024, number of used features: 8001
+[LightGBM] [Info] Start training from score 134.808864
+Random Forest Regressor metrics:
+Mean Absolute Error (MAE): 63.97910177519126
+Mean Squared Error (MSE): 7297.702417059596
+R-squared (R2): 0.2928412867569655
+Conda ML gpu job finished at Mon Aug 26 21:22:18 AWST 2024
+Total Runtime: 00:00:12

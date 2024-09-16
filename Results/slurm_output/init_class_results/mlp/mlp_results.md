@@ -214,6 +214,18 @@ Metrics:
 
 - still poor fit but better than before
 
+Repeating same model architecture but using exp as an expected value, not a binary silent vs non-silent
+
+Metrics:
+| Data set | MSE | 
+| ------------- | ------------- |
+| Train | 13656.3467 | 
+| Validation | 8982.0771 | 
+| Test | 8731.1531 | 
+(481004)
+
+- 35/100 iterations
+- worse than the binary encoding, which is opposite to the outcome of the ML models? Why might this be?
 
 
 
@@ -256,13 +268,23 @@ Once again, comparing these results to those of ML models, we saw better MSE wit
 *** NEED TO CONFIRM: Run again converting expression to 0 or 1 (may have run these using expected expression value - not binary)
 Should I be using binary here? Or could I use counts?
 
-Comparison of MSE:
+Comparison of MSE (with expression as expected value - not binary):
 | Model | MSE |
 | ------------- | ------------- | 
 | Random Forest | 7097.7616 | 
 | XGBoost | 6689.7580 | 
 | LightGBM | 6581.1190 |
+| MLP | 8731.1531 |
+(481677)
+
+Comparison of MSE (with expression as binary value - silent or non-silent):
+| Model | MSE |
+| ------------- | ------------- | 
+| Random Forest | 7378.2208 | 
+| XGBoost | 7392.5775 | 
+| LightGBM | 7297.7024 |
 | MLP | 7425.3827 |
+(481651, 481652, 481653)
 
 - MLP is outperformed by all ML models, with LightGBM performing most successfully (with a considerable difference). 
 - Both expression (silent vs non-silent) and DNAm presence (not location specific) is better modelled by ML models, as opposed to deep learning models
@@ -271,6 +293,22 @@ Comparison of MSE:
 
 - Despite the weird plots from those models (of actual vs predicted), they performed better
 
+
+#### Comparing model MSE to a baseline MSE
+- We will take the mean of the target variable and calculate the MSE if the model predicted the mean everytime. This will act as a baseline for the success/interpretation of our model's MSE.
+```
+    percentage_improvement = ((baseline_mse - model_mse) / baseline_mse) * 100
+```
+Here, our baseline MSE =  10319.948376161663
+
+
+| Model (expression representation) | MSE | Improvement (%) |
+| ------------- | ------------- | ------------- | 
+| Baseline (expec) | 7378.2208 | - | 
+| Random Forest (expec) | 7097.7616 | 31.2229 |
+| XGBoost (expec) | 6689.7580 | 35.1764 |
+| LightGBM (expec)| 6581.1190 | 36.2291 |
+| MLP (binary) | 7425.3827 | 28.0482 |
 
 
 
@@ -287,6 +325,11 @@ Exploring the data:
 - other than the spike for 0 and for 4000, seems to be fairly uniformly distributed - frequency of bases under K9 peaks sits between 10 and 100 for most values/counts
 - mean = 129.07306907111263
 - median = 0.0
+
+Of these instances:
+- Number of K9 sums that are 0: 54808
+- Number of K9 sums that are greater than 0: 3972
+
 
 #### Predicting K9 4000 vector
 
@@ -368,17 +411,34 @@ Metrics:
 
 How to balance the dataset a bit more? Undersample the genes with no peaks? For both K9 and K27?
 
+Balancing the dataset (undersampling zero-count samples: 50% zero 50% > zero)
+
+Non-zero dataset (using only non-zeros in the dataset)
+
 #### Comparison to ML models: predicting K9 count
 - Using Random Forest Regressor, LightGBM, XGBoost and SVM
 
 | Model | MSE |
 | ------------- | ------------- | 
-| Random Forest | 0 |
+| Random Forest | 367426.5746 |
 | XGBoost | 364188.3731 | 
 | LightGBM | 338212.4002 | 
 | SVM | 0 | 
 
 - LGBM outperforms the MLP model
+
+#### Using LGBM to see impact of altering proportion of zero-count samples:
+- Balancing the dataset (undersampling zero-count samples: 50% zero 50% > zero)
+- Non-zero dataset (using only non-zeros in the dataset)
+
+| Model | Change to dataset | MSE |
+| ------------- | ------------- | ------------- | 
+| LGBM | 50% zero, 50% non-zero dataset | 1619186.1367 |
+| LGBM | Non-zero dataset | 1709547.0863 |
+(481966, 481967)
+
+Notes: 
+- Reducing the dataset in an attempt to balance classes hindered performance significantly 
 
 
 ## MLP to predict K27 histone modifications
@@ -394,6 +454,10 @@ Exploring the data:
 - unlike K9, this distriution is more skewed with higher frequencies of less bases
 - mean = 43.509510037427695
 - median = 0.0
+
+Of these instances:
+- Number of K27 sums that are 0: 53072
+- Number of K27 sums that are greater than 0: 5708
 
 #### Predicting K27 4000 vector
 
@@ -476,9 +540,28 @@ Metrics:
 
 | Model | MSE |
 | ------------- | ------------- | 
-| Random Forest | 0 |
+| Random Forest | 33962.8739 |
 | XGBoost | 34807.9646 | 
 | LightGBM | 32198.1695 | 
-| SVM | 0 | 
+| SVM | - | 
 
 - LGBM outperforms the MLP model
+
+#### Using LGBM to see impact of altering proportion of zero-count samples:
+- Balancing the dataset (undersampling zero-count samples: 50% zero 50% > zero)
+- Non-zero dataset (using only non-zeros in the dataset)
+
+| Model | Change to dataset | MSE |
+| ------------- | ------------- | ------------- | 
+| LGBM | 50% zero, 50% non-zero dataset | 123553.5463 |
+| LGBM | Non-zero dataset | 173434.9768 |
+(481968, 481969)
+
+Notes: 
+- Reducing the dataset in an attempt to balance classes bolstered performance significantly (opposite of k9?)
+
+## MLP to predict Combined count of K9 and K27
+
+Started with a LGBM baseline: MSE = 363961.7952
+(484520)
+- noticeably worse? Must be more informative to have the other histone modification as input
