@@ -58,27 +58,22 @@ Notes:
 
 ### Random Masking model: using all features (and all data) as input with randomly masked subsections
 (482584)
-This model utilises a random masking function which randomly selects a feature subset for each minibatch and validation set and masks this whole feature as -1. It then finds the loss of the masked section - so the below plot represents the error of regenrating the masked section. 
+This model utilises a random masking function which randomly selects a feature subset for each minibatch and validation set and masks this whole feature as -1. It then finds the loss of the masked section - so the below plot represents the error of regenerating the masked section. 
 
-![VAE Random Mask All Data](coding_size50/vae_mask_allcat_v2.png)
+![VAE Random Mask All Data](coding_size300/vae_loss_plot_allcat_300_v4.png)
+![VAE Random Mask All Data (Log)](coding_size300/vae_loss_plot_allcat_300_v4_log.png)
+
 
 Notes:
-- When running this model, noticed consistent spikes early on - hence I have added the log scale to better see the lower error rates
-- My best guess is that because we randomly mask sections, the model doesn't follow the typical loss corve (slowly decreasing over time). At some point, it makes a large error
-- The large error in this sample occurs at epoch 12 where subset 1 (K9) increased error from <1 to >30, which continued to increase to >740 (likely due to introducing instability) until epoch 13 where it resets
-- Final epoch settling around loss: 0.2072 and val_loss: 0.0016
-- Why might val loss be so much lower than train loss? Is it because of the regularisation introduced by KLDivergence
-
-To better understand this model, we now report whole loss and masked loss to see how the model progresses:
-
-INSERT PLOT
+- Inconsistent loss curve due to random masking - appeears the model is struggling to learn with such variance
+- This makes sense since the reconstruction loss is based solely on the masked region whereas the KL Loss comes from the entire input
 
 
 ### Fixed Masking models: using all features but training the model whilst masking only one section throughout training and validation
 
 Initially, this was separated out into individual models to better understand the spikes and components that the Random Masking model is required to learn.
 
-To further investigate the reconstrcution of individual components (in particular, K9 and K27, which we currently are unsure whether the model is predicting well or just predicting zero the whole time), we separate loss into KL Loss and reconstrcution loss. This will show whether the loss is derviced from the guassians or reconstruction. 
+To further investigate the reconstruction of individual components (in particular, K9 and K27, which we currently are unsure whether the model is predicting well or just predicting zero the whole time), we separate loss into KL Loss and reconstrcution loss. This will show whether the loss is derived from the guassians or reconstruction. 
 
 In VAE, total loss is composed of two components:
 1. Reconstruction loss: How well the model can reconstruct the data from the latent space. It ensures the decoder output is close to the original input. 
@@ -104,128 +99,120 @@ KL loss is universal to the whole input, whilst reconstruction loss can be speci
 - KL loss
 
 #### Masking DNAm
-![VAE Fixed Mask DNAm](coding_size50/vae_mask_singlecat_DNAm_v2.png)
+![VAE Fixed Mask DNAm](coding_size100/vae_loss_plot_DNAm_100_v4.png)
+![VAE Fixed Mask DNAm (Log)](coding_size100/vae_loss_plot_DNAm_100_v4_log.png)
 
+Notes:
+- Training loss rapidly drops after first epoch - relatively stable after this
+- Reconstruction loss is fairly low (validation less than training? Is this just because the model is updating weights then testing?)
+- KL loss is extremely low, with a small discrepancy between training and validation (contributes practically nothing to total loss)
+- Does this mean the model isn't learning a meaningful latent representation of the inputs since the KL loss is so low?
 
+| Metric | Training | Validation |
+| ------------- | ------------- | ------------- |
+| Total Loss | 0.1459 | 0.1457 |
+| Reconstruction Loss | 0.1459 | 0.1457 |
+| KL Loss | 5.9530e-08 | 1.0244e-05 |
+(488146)
 
 #### Masking K9
-![VAE Fixed Mask K9](coding_size50/vae_mask_singlecat_K9_v1.png)
+![VAE Fixed Mask K9](coding_size100/vae_loss_plot_K9_100_v4.png)
+![VAE Fixed Mask K9 (log)](coding_size100/vae_loss_plot_K9_100_v4_log.png)
+
+
+Notes:
+- Not much continual learning here - plateaus very early
+- Again, KL loss is basically 0 which is concerning?
+
+
+| Metric | Training | Validation |
+| ------------- | ------------- | ------------- |
+| Total Loss | 0.1422 | 0.1463 |
+| Reconstruction Loss | 0.1422 | 0.1463 |
+| KL Loss | 1.4997e-06 | 1.3168e-06 |
+(488147)
+
 
 
 #### Masking K27
-![VAE Fixed Mask K27](coding_size50/vae_mask_singlecat_K27_v1.png)
+![VAE Fixed Mask K27](coding_size100/vae_loss_plot_K27_100_v4.png)
+![VAE Fixed Mask K27 (log)](coding_size100/vae_loss_plot_K27_100_v4_log.png)
+
+Notes:
+- Not much continual learning here - plateaus very early (even lower than K9 - probably because even more sparse)
+- Again, KL loss is basically 0 (no meaningful learning?)
+
+
+| Metric | Training | Validation |
+| ------------- | ------------- | ------------- |
+| Total Loss | 0.0607 | 0.0613 |
+| Reconstruction Loss | 0.0607 | 0.0613 |
+| KL Loss | 5.2776e-07 | 7.5919e-07 |
+(488149)
+
 
 
 #### Masking Expression
-![VAE Fixed Mask Expression](coding_size50/vae_mask_singlecat_expression_v1.png)
+![VAE Fixed Mask Expression](coding_size100/vae_loss_plot_expression_100_v4.png)
+![VAE Fixed Mask Expression (Log)](coding_size100/vae_loss_plot_expression_100_v4_log.png)
 
 
-Notes: 
-- All categories when masking consistently throughout training decrease gradually over time (without sudden spikes as seen in the random masking model)
-- How can I compare this to a baseline? How can I assess success? 
-- Final val loss for all the above models: 
-
-| Model | Val BCE |
-| ------------- | ------------- |
-| DNAm | 0.0031 |
-| K9 | 0033 |
-| K27 | 0.0102 |
-| Expression | 0.0033 |
-(482585, 482586, 482587, 482589)
-
-- Expression, DNAm, K9 all have similar loss whilst K27 has a slightly higher loss
+Notes:
+- Not much continual learning here - plateaus very early (even lower than K9 - probably because even more sparse)
+- Again, KL loss is basically 0 (no meaningful learning?)
 
 
-### Loss breakdowns (fixed feature masking) - coding_size=50
-
-- Note that loss is averaged over the inputs (so masked loss may be higher than total loss if it is harder to predict)
-- KL Loss is the same for total and whole as it is used in the latent space which doesn't align with a specific portion of the input
-
-NOTE: 3rd train vs Loss plot - Val = RED, Train = GREEN
-#### DNAm
-
-(486327)
-
-![VAE Fixed Mask DNAm (Loss Breakdown)](coding_size50/vae_allcat_mask_vs_whole_loss_DNAm_v3.png)
-![VAE Fixed Mask DNAm (KL Breakdown)](coding_size50/kl_loss_plot_DNAm_v3.png)
+| Metric | Training | Validation |
+| ------------- | ------------- | ------------- |
+| Total Loss | 0.6651 | 0.6610 |
+| Reconstruction Loss | 0.6651 | 0.6610 |
+| KL Loss |  9.4815e-07 | 1.0311e-06 |
+(488150)
 
 
-
-#### K9
-
-(486328)
-
-![VAE Fixed Mask K9 (Loss Breakdown)](coding_size50/vae_allcat_mask_vs_whole_loss_K9_v3.png)
-![VAE Fixed Mask K9 (KL Breakdown)](coding_size50/kl_loss_plot_K9_v3.png)
-
-#### K27
-
-(486329)
-
-![VAE Fixed Mask K27 (Loss Breakdown)](coding_size50/vae_allcat_mask_vs_whole_loss_K27_v3.png)
-![VAE Fixed Mask K27 (KL Breakdown)](coding_size50/kl_loss_plot_K27_v3.png)
-
-#### Expression
-
-(486330)
-
-![VAE Fixed Mask Expression (Loss Breakdown)](coding_size50/vae_allcat_mask_vs_whole_loss_expression_v3.png)
-![VAE Fixed Mask Expression (KL Breakdown)](coding_size50/kl_loss_plot_expression_v3.png)
-
-
-^^ Realised I am not plotting total training and validation loss which makes it hard to see how the model is performing. Additionally, I realised my coding size / latent dimension is likely quite constricting given my input size of 12001. I will change this from 50 to 300 and repeat the above studies. 
-
-### Loss breakdowns (fixed feature masking) [coding_size=300]
+### All-pairs approach
 
 #### DNAm
-![VAE Fixed Mask DNAm [coding_size=300] (Loss Breakdown)](coding_size300/vae_allcat_mask_vs_whole_loss_DNAm_v3.png)
-![VAE Fixed Mask DNAm [coding_size=300] (KL Breakdown)](coding_size300/kl_loss_plot_DNAm_v3.png)
-![VAE Fixed Mask DNAm [coding_size=300] (Loss)](coding_size300/train_vs_val_loss_DNAm_v3.png)
+![VAE All Pairs DNAm](coding_size100/all_pairs/vae_loss_plot_DNAm_all_pairs_v4.png)
+![VAE All Pairs DNAm (Log)](coding_size100/all_pairs/vae_loss_plot_DNAm_all_pairs_v4_log.png)
 
 #### K9
-![VAE Fixed Mask K9 [coding_size=300] (Loss Breakdown)](coding_size300/vae_allcat_mask_vs_whole_loss_K9_v3.png)
-![VAE Fixed Mask K9 [coding_size=300] (KL Breakdown)](coding_size300/kl_loss_plot_K9_v3.png)
-![VAE Fixed Mask K9 [coding_size=300] (Loss)](coding_size300/train_vs_val_loss_K9_v3.png)
-
+![VAE All Pairs K9](coding_size100/all_pairs/vae_loss_plot_K9_all_pairs_v4.png)
+![VAE All Pairs K9 (Log)](coding_size100/all_pairs/vae_loss_plot_K9_all_pairs_v4_log.png)
 
 #### K27
-![VAE Fixed Mask K27 [coding_size=300] (Loss Breakdown)](coding_size300/vae_allcat_mask_vs_whole_loss_K27_v3.png)
-![VAE Fixed Mask K27 [coding_size=300] (KL Breakdown)](coding_size300/kl_loss_plot_K27_v3.png)
-![VAE Fixed Mask K27 [coding_size=300] (Loss)](coding_size300/train_vs_val_loss_K27_v3.png)
-
+![VAE All Pairs K27](coding_size100/all_pairs/vae_loss_plot_K27_all_pairs_v4.png)
+![VAE All Pairs K27 (Log)](coding_size100/all_pairs/vae_loss_plot_K27_all_pairs_v4_log.png)
 
 #### Expression
-![VAE Fixed Mask Expression [coding_size=300] (Loss Breakdown)](coding_size300/vae_allcat_mask_vs_whole_loss_expression_v3.png)
-![VAE Fixed Mask Expression [coding_size=300] (KL Breakdown)](coding_size300/kl_loss_plot_expression_v3.png)
-![VAE Fixed Mask Expression [coding_size=300] (Loss)](coding_size300/train_vs_val_loss_expression_v3.png)
+![VAE All Pairs Expression](coding_size100/all_pairs/vae_loss_plot_expression_all_pairs_v4.png)
+![VAE All Pairs Expression (Log)](coding_size100/all_pairs/vae_loss_plot_expression_all_pairs_v4_log.png)
 
 
-Notes: 
-- 
+Notes:
 
-### Loss breakdowns (fixed feature masking) [coding_size=300] with balanced expression dataset
+- Overall, seeing similar issues here with extremely low KL Loss (basically zero) for all plots
+- Will have to reattempt this with much smaller coding size
 
-#### DNAm
-![VAE Fixed Mask DNAm [coding_size=300] & Balanced expression (Loss Breakdown)](coding_size300/balanced/vae_allcat_mask_vs_whole_loss_DNAm_balanced_v3.png)
-![VAE Fixed Mask DNAm [coding_size=300] & Balanced expression (KL Breakdown)](coding_size300/balanced/kl_loss_plot_DNAm_balanced_v3.png)
-![VAE Fixed Mask DNAm [coding_size=300] & Balanced expression (Loss)](coding_size300/balanced/train_vs_val_loss_DNAm_balanced_v3.png)
+## Investigating Low KL Loss
 
-#### K9
-![VAE Fixed Mask K9 [coding_size=300] & Balanced expression (Loss Breakdown)](coding_size300/balanced/vae_allcat_mask_vs_whole_loss_K9_balanced_v3.png)
-![VAE Fixed Mask K9 [coding_size=300] & Balanced expression (KL Breakdown)](coding_size300/balanced/kl_loss_plot_K9_balanced_v3.png)
-![VAE Fixed Mask K9 [coding_size=300] & Balanced expression (Loss)](coding_size300/balanced/train_vs_val_loss_K9_balanced_v3.png)
+**Attempt to reduce coding size down to 10** (503589)
 
+![VAE Fixed Mask DNAm](coding_size10/vae_loss_plot_DNAm_10_v4.png)
+![VAE Fixed Mask DNAm (Log)](coding_size10/vae_loss_plot_DNAm_10_v4_log.png)
 
-#### K27
-![VAE Fixed Mask K27 [coding_size=300] & Balanced expression (Loss Breakdown)](coding_size300/balanced/vae_allcat_mask_vs_whole_loss_K27_balanced_v3.png)
-![VAE Fixed Mask K27 [coding_size=300] & Balanced expression (KL Breakdown)](coding_size300/balanced/kl_loss_plot_K27_balanced_v3.png)
-![VAE Fixed Mask K27 [coding_size=300] & Balanced expression (Loss)](coding_size300/balanced/train_vs_val_loss_K27_balanced_v3.png)
+**Attempt to reduce coding size down to 10 with weighted KL (1.2)** (503590)
+![VAE Fixed Mask DNAm](coding_size10/vae_loss_plot_DNAm_10_v5.png)
+![VAE Fixed Mask DNAm (Log)](coding_size10/vae_loss_plot_DNAm_10_v5_log.png)
 
+**Recreate no masking model but tracking KL Loss (coding_size=50)** (503591)
+![VAE with KL Loss](coding_size50/KLLoss/vae_v1_total_and_kl_loss_50.png)
 
-#### Expression
-![VAE Fixed Mask Expression [coding_size=300] & Balanced expression (Loss Breakdown)](coding_size300/balanced/vae_allcat_mask_vs_whole_loss_expression_balanced_v3.png)
-![VAE Fixed Mask Expression [coding_size=300] & Balanced expression (KL Breakdown)](coding_size300/balanced/kl_loss_plot_expression_balanced_v3.png)
-![VAE Fixed Mask Expression [coding_size=300] & Balanced expression (Loss)](coding_size300/balanced/train_vs_val_loss_expression_balanced_v3.png)
+- the loss and KL Divergence here looks better?
 
 
-
+Could it be an issue with masking then?
+Try:
+- random masking within section
+- training model on whole recon loss + KL
+- conditional VAE
