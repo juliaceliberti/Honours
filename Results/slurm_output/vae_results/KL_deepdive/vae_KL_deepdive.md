@@ -939,11 +939,99 @@ Current:
       1 + log_var - tf.exp(log_var) - tf.square(mean),
       axis=-1,
   )
-  self.add_loss(tf.reduce_mean(kl_loss * 0.01))
+  self.add_loss(tf.reduce_mean(kl_loss) * 0.01)
   return tf.random.normal(tf.shape(log_var)) * tf.exp(log_var / 2) + mean
 ```
 
+KL Loss: 
+[ 1.64415687e-04  4.99933958e-06 -3.83704901e-07  1.02445483e-06
+ -7.49528408e-06  8.79168510e-07  3.92645597e-06 -8.75443220e-07
+ -1.35935843e-05 -2.90572643e-06]
 
 
+
+
+We will continue with the other method. KL Losss approaches zero more quickly because the penalty is larger. 
+- here we sum across the latent dimensions (capture total divergence for the sample), then averaging at the end
+- selected method: average over the each latent dim which can reduce the overal magnitude of the KL Loss becuase we reduce the impact each individual dimension contributes to the total loss
+
+### KL Weighting = 0.00001
+
+KL Loss
+[0.00021252 0.00023061 0.00024868 0.00025867 0.00028978 0.00026996
+ 0.00025627 0.00024831 0.00024617 0.00023246]
+
+ - smaller loss now than 0.0001
+
+Expression Accuracy: 0.7335
+Expression Mean Squared Error: 0.2036
+Expression F1 Score: 0.6926
+Expression Precision: 0.8225
+Expression Recall: 0.5982
+
+MSE for DNAm section: 31854.7257
+MSE for K9 section: 262771.3624
+MSE for K27 section: 35124.8199
+
+
+MSE for DNAm section: 0.0649
+MSE for K9 section: 0.0055
+MSE for K27 section: 0.0068
+
+***Version 2 with correct KL calc***
+
+[0.00012589 0.00013573 0.00015224 0.00016643 0.00018383 0.00018095
+ 0.00017206 0.00016939 0.00016782 0.00017319]
+
+ - latent codings starting to shift a bit - looking a little less normal
+
+ Expression Accuracy: 0.7375
+Expression Mean Squared Error: 0.2059
+Expression F1 Score: 0.6955
+Expression Precision: 0.8323
+Expression Recall: 0.5973
+
+- highest F1 yet
+
+
+MSE for DNAm section: 31856.9600
+MSE for K9 section: 262771.3624
+MSE for K27 section: 35124.8199
+
+MSE for DNAm section: 0.0642
+MSE for K9 section: 0.0055
+MSE for K27 section: 0.0062
+
+### KL weight = 0.000001
+KL Loss
+[2.77664512e-05 3.61613929e-05 4.04771417e-05 4.74508852e-05
+ 5.21317124e-05 5.23366034e-05 5.24166971e-05 5.19081950e-05
+ 5.45140356e-05 5.65499067e-05]
+ - started getting quite small again
+
+ recon loss is low but looking less normal now
+
+
+![Histograms KL 0.000001](latent_codings_histograms_KL_0_000001.png)
+
+
+
+
+Expression Accuracy: 0.7366
+Expression Mean Squared Error: 0.2014
+Expression F1 Score: 0.7058
+Expression Precision: 0.8031
+Expression Recall: 0.6295
+
+MSE for DNAm section: 31849.8435
+MSE for K9 section: 262771.3624
+MSE for K27 section: 35124.8199
+
+MSE for DNAm section: 0.0626
+MSE for K9 section: 0.0054
+MSE for K27 section: 0.0060
+
+- but we do get the best recon results
+- is the best middle ground then to go with KL = 0.00001
 
 ### Would be good to try a tuner on coding size, gamma [1.5, 2], alpha[0.25, 0.75], balanced v original

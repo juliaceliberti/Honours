@@ -87,7 +87,7 @@ variational_ae = tf.keras.Model(inputs=[inputs], outputs=[reconstructions])
 variational_ae.compile(
     loss="binary_crossentropy",
     optimizer="adam",
-    metrics=[tf.keras.metrics.KLDivergence()],
+    metrics=[],
 )
 
 # Adding early stopping
@@ -117,13 +117,6 @@ axs[0].set_ylabel("Total Loss")
 axs[0].legend()
 axs[0].set_title("Training and Validation Total Loss")
 
-# Plot training and validation KL Divergence
-axs[1].plot(history.history["kl_divergence"], label="Training KL Loss")
-axs[1].plot(history.history["val_kl_divergence"], label="Validation KL Loss")
-axs[1].set_xlabel("Epochs")
-axs[1].set_ylabel("KL Divergence")
-axs[1].legend()
-axs[1].set_title("Training and Validation KL Divergence")
 
 # Adjust layout and save the figure
 plt.tight_layout()
