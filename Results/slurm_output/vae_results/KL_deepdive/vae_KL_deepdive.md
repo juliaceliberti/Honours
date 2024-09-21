@@ -661,5 +661,289 @@ OUTPUT:
 | K9 | MSE | 0.0103 |
 | K27 | MSE | 0.0131 |
 
+### Adding another Dense layer (1563)
 
-### Would be good to try a tuner on coding size, gamma [1.5, 2], balanced
+```
+# # ENCODER
+inputs = tf.keras.layers.Input(shape=[12001])
+x = tf.keras.layers.Dense(1536, activation="relu")(inputs)  # Increase size
+x = tf.keras.layers.Dense(1280, activation="relu")(x)  # Increase size
+x = tf.keras.layers.Dense(1024, activation="relu")(x)  # Increase size
+x = tf.keras.layers.Dense(768, activation="relu")(x) # changing layer sizes
+x = tf.keras.layers.Dense(512, activation="relu")(x)
+#x = tf.keras.layers.Dense(256, activation="relu")(x)
+codings_mean = tf.keras.layers.Dense(codings_size)(x)  # mean
+codings_log_var = tf.keras.layers.Dense(codings_size)(x)  # log_var
+codings = Sampling()([codings_mean, codings_log_var])  # KL Loss added here
+
+
+# KL Divergence Layer
+# codings_mean, codings_log_var = KLDivergenceLayer()([codings_mean, codings_log_var])
+
+# define VAE
+variational_encoder = tf.keras.Model(
+    inputs=[inputs], outputs=[codings_mean, codings_log_var, codings]
+)
+
+# DECODER
+decoder_inputs = tf.keras.layers.Input(shape=[codings_size])
+#x = tf.keras.layers.Dense(256, activation="relu")(decoder_inputs)
+x = tf.keras.layers.Dense(512, activation="relu")(decoder_inputs)
+x = tf.keras.layers.Dense(768, activation="relu")(x)
+#x = tf.keras.layers.BatchNormalization()(x)
+#x = tf.keras.layers.Dropout(0.3)(x)  # Dropout to regularize
+x = tf.keras.layers.Dense(1024, activation="relu")(x)  # Add another layer
+#x = tf.keras.layers.BatchNormalization()(x)
+#x = tf.keras.layers.Dropout(0.3)(x)  # Dropout to regularize
+x = tf.keras.layers.Dense(1280, activation="relu")(x)  # Add another layer
+x = tf.keras.layers.Dense(1536, activation="relu")(x)  # Add another layer
+x = tf.keras.layers.Dense(12001, activation="sigmoid")(x)  # Output layer for binary data
+```
+
+
+
+KL Loss over 10 epochs
+[0.00102267 0.00110254 0.00114843 0.00111509 0.0012218  0.00116046
+ 0.00114288 0.0011435  0.00118431 0.00113488]
+ - seems to be growing a bit
+
+Normal dist looks fine
+
+
+| Feature | Metric | Value | 
+| -------- | -------- | -------- |
+| Expression | MSE | 0.2214 |
+| Expression | Accuracy | 0.6808 |
+| Expression | F1 | 0.6700 |
+| Expression | Precision | 0.6848 |
+| Expression | Recall | 0.6559 |
+
+- accuracy increased and MSE decreased
+- F1 decreased
+- recall decreased, prceision increased
+
+For remaining sections
+COUNTS:
+| Feature | Metric | Value | 
+| -------- | -------- | -------- |
+| DNAm | MSE | 32087.8255 |
+| K9 | MSE | 308514.7298 |
+| K27 | MSE | 36908.2171 |
+
+- slight increase in DNAm MSE count
+
+
+OUTPUT:
+| Feature | Metric | Value | 
+| -------- | -------- | -------- |
+| DNAm | MSE | 0.0731 |
+| K9 | MSE | 0.0127 |
+| K27 | MSE | 0.0138 |
+
+- increase in MSE for all sections
+
+Therefore, the previous version was better
+
+### Returning to an imbalanced dataset (and one less dense - no 1536)
+
+KL Loss
+[0.00119362 0.00123642 0.00129527 0.00127598 0.00129576 0.00121744
+ 0.00125996 0.00120955 0.00124193 0.00123405]
+ - stable whole time
+
+ - better at predicting non-expression values (DNAm, K9, K27) but worse at predicting expression
+
+looks normal
+
+EXPRESSION
+Expression Accuracy: 0.7345
+Expression Mean Squared Error: 0.2098
+Expression F1 Score: 0.6039
+Expression Precision: 0.6914
+Expression Recall: 0.5360
+
+COUNT
+MSE for DNAm section: 28238.6744
+MSE for K9 section: 363132.0504
+MSE for K27 section: 38381.5382
+
+OUTPUT
+MSE for DNAm section: 0.0671
+MSE for K9 section: 0.0108
+MSE for K27 section: 0.0119
+
+### Experimenting with adding alpha to the loss function (alpha = 0.75)
+- given that there is an average of 307.68 1s in the train dataset / 12001 values in the input vector, we will start with a higher alpha value of 0.75, then try a 0.9 and a 0.5
+
+KL Loss over 10 epochs
+
+[0.00117785 0.00121291 0.0012545  0.00131126 0.0013218  0.00135368
+ 0.00127647 0.00126978 0.00125456 0.001226  ]
+
+
+
+Expression Accuracy: 0.7277
+Expression Mean Squared Error: 0.2157
+Expression F1 Score: 0.5853
+Expression Precision: 0.6778
+Expression Recall: 0.5150
+
+
+
+MSE for DNAm section: 28242.9895
+MSE for K9 section: 363132.0504
+MSE for K27 section: 38381.5382
+
+MSE for DNAm section: 0.0628
+MSE for K9 section: 0.0103
+MSE for K27 section: 0.0127
+
+** worse - will try a lower alpha
+
+### alpha = 0.25
+
+KL LOss
+[0.00118159 0.00120053 0.00135695 0.00123002 0.0012583  0.00125431
+ 0.00124509 0.00131879 0.00137661 0.00140101]
+ - increasing over time
+
+
+Expression Accuracy: 0.7144
+Expression Mean Squared Error: 0.2145
+Expression F1 Score: 0.5355
+Expression Precision: 0.6811
+Expression Recall: 0.4412
+
+
+MSE for DNAm section: 28262.2724
+MSE for K9 section: 363132.0504
+MSE for K27 section: 38381.5382
+
+MSE for DNAm section: 0.0653
+MSE for K9 section: 0.0108
+MSE for K27 section: 0.0124
+
+### alpha = 0.9
+- previously, KL beta = 0.001
+
+KL Loss
+[0.00112754 0.00118575 0.00130388 0.00128487 0.00119975 0.00133816
+ 0.00135461 0.00124251 0.00131768 0.00132422]
+ - around the same level
+
+Expression Accuracy: 0.7238
+Expression Mean Squared Error: 0.2104
+Expression F1 Score: 0.5758
+Expression Precision: 0.6742
+Expression Recall: 0.5025
+
+
+MSE for DNAm section: 28247.7275
+MSE for K9 section: 363132.0504
+MSE for K27 section: 38381.5382
+
+MSE for DNAm section: 0.0668
+MSE for K9 section: 0.0105
+MSE for K27 section: 0.0129
+
+might be slightly worse
+
+### KL Weighting = 0.0001
+- balanced, 300, alpha=0.25, gamma=2.0
+
+```
+codings_size = 300
+
+inputs = tf.keras.layers.Input(shape=[12001])
+x = tf.keras.layers.Dense(1280, activation="relu")(inputs)  # Increase size
+x = tf.keras.layers.Dense(1024, activation="relu")(x)  # Increase size
+x = tf.keras.layers.Dense(768, activation="relu")(x) # changing layer sizes
+x = tf.keras.layers.Dense(512, activation="relu")(x)
+codings_mean = tf.keras.layers.Dense(codings_size)(x)  # mean
+codings_log_var = tf.keras.layers.Dense(codings_size)(x)  # log_var
+codings = Sampling()([codings_mean, codings_log_var])  # KL Loss added here
+
+decoder_inputs = tf.keras.layers.Input(shape=[codings_size])
+x = tf.keras.layers.Dense(512, activation="relu")(decoder_inputs)
+x = tf.keras.layers.Dense(768, activation="relu")(x)
+x = tf.keras.layers.Dense(1024, activation="relu")(x)  # Add another layer
+x = tf.keras.layers.Dense(1280, activation="relu")(x)  # Add another layer
+x = tf.keras.layers.Dense(12001, activation="sigmoid")(x)  # Output layer for binary data
+
+```
+
+KL Loss
+[0.00043765 0.00039846 0.00045231 0.00050622 0.00047957 0.00047795
+ 0.00048858 0.00047208 0.00049289 0.00050519]
+ - even lower despite decreasing its importance?
+
+Recon loss looks quite low
+
+
+Expression Accuracy: 0.7280
+Expression Mean Squared Error: 0.2077
+Expression F1 Score: 0.6862
+Expression Precision: 0.8150
+Expression Recall: 0.5926
+
+MSE for DNAm section: 31859.1357
+MSE for K9 section: 262771.3624
+MSE for K27 section: 35124.8199
+
+MSE for DNAm section: 0.0646
+MSE for K9 section: 0.0066
+MSE for K27 section: 0.0073
+
+- lowest loss so far
+- best model
+- doesn't need to be so constrained since it already follows a normal dist
+
+
+### KL Weighting = 0.01
+
+KL Loss
+[0.00191597 0.00233753 0.00263926 0.00267881 0.00267605 0.00260244
+ 0.00267198 0.00269688 0.00263559 0.00265283]
+ - higher when constraining more??
+ - need to check implementation
+
+ Expression Accuracy: 0.5315
+Expression Mean Squared Error: 0.2467
+Expression F1 Score: 0.6415
+Expression Precision: 0.5208
+Expression Recall: 0.8351
+
+MSE for DNAm section: 31800.9810
+MSE for K9 section: 262771.3624
+MSE for K27 section: 35124.8199
+
+MSE for DNAm section: 0.0714
+MSE for K9 section: 0.0186
+MSE for K27 section: 0.0203
+
+- has a harder time recreating this
+
+***Comparing against KL loss implementation***
+Previous:
+```
+  kl_loss = -0.5 * tf.reduce_mean(
+      1 + log_var - tf.exp(log_var) - tf.square(mean),
+      axis=-1,
+  )
+  self.add_loss(kl_loss * 0.01)
+  return tf.random.normal(tf.shape(log_var)) * tf.exp(log_var / 2) + mean
+```
+Current:
+```
+  kl_loss = -0.5 * tf.reduce_sum(
+      1 + log_var - tf.exp(log_var) - tf.square(mean),
+      axis=-1,
+  )
+  self.add_loss(tf.reduce_mean(kl_loss * 0.01))
+  return tf.random.normal(tf.shape(log_var)) * tf.exp(log_var / 2) + mean
+```
+
+
+
+
+### Would be good to try a tuner on coding size, gamma [1.5, 2], alpha[0.25, 0.75], balanced v original
